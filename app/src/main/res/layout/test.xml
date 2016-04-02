@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/choose_frame"
+        android:layout_width="wrap_content"
+        android:layout_height="95dp">
+        <ImageView
+            android:id="@+id/right_icon"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            />
+
+        <ImageView
+            android:id="@+id/left_icon"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            />
+        <TextView
+            android:id="@+id/start_text"
+            android:text="我的位置"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:gravity="center"
+            android:layout_toRightOf="@+id/left_icon"
+            android:layout_toLeftOf="@id/right_icon"/>
+        <ImageView
+            android:id="@+id/first_line"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@+id/start_text"
+            android:layout_toRightOf="@+id/left_icon"
+            android:layout_toLeftOf="@id/right_icon"
+            android:background="@color/grey_300"
+            />
+        <TextView
+            android:id="@+id/end_text"
+            android:text="终 点"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:gravity="center"
+            android:layout_toRightOf="@+id/left_icon"
+            android:layout_toLeftOf="@id/right_icon"
+            android:layout_below="@+id/first_line"/>
+        <ImageView
+            android:id="@+id/second_line"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@+id/end_text"
+            android:layout_toRightOf="@+id/left_icon"
+            android:layout_toLeftOf="@id/right_icon"
+            android:background="@color/grey_300"
+            />
+        <TextView
+            android:id="@+id/passed_text"
+            android:text="途经城市"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:gravity="center"
+            android:layout_toRightOf="@+id/left_icon"
+            android:layout_toLeftOf="@id/right_icon"
+            android:layout_below="@+id/second_line"/>
+    </RelativeLayout>
+    <ImageView
+        android:id="@+id/third_line"
+        android:layout_width="match_parent"
+        android:layout_height="6dp"
+        android:layout_below="@+id/choose_frame"
+        android:background="@color/grey_300"
+        />
+    <RelativeLayout
+        android:id="@+id/history_frame"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:layout_below="@+id/third_line">
+
+        <ImageView
+            android:id="@+id/history_icon"
+            android:layout_width="30dp"
+            android:layout_height="match_parent"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="旅游历史"
+            android:gravity="center"
+            android:textColor="#000000"
+            android:layout_toRightOf="@+id/history_icon"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginRight="20dp"
+            android:layout_alignParentRight="true"
+            android:text="快来看看你的旅游记录吧"
+            android:textSize="10sp"
+            android:gravity="center"
+            android:textColor="@color/half_black"/>
+
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/four_line"
+        android:layout_width="match_parent"
+        android:layout_height="6dp"
+        android:layout_below="@+id/history_frame"
+        android:background="@color/grey_300"
+        />
+
+    <RelativeLayout
+        android:id="@+id/first_strategy_frame"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:layout_below="@+id/four_line">
+
+        <ImageView
+            android:id="@+id/first_strategy_icon"
+            android:layout_width="30dp"
+            android:layout_height="match_parent"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="用 时 最 短 策 略"
+            android:textSize="15sp"
+            android:gravity="center"
+            android:textColor="@color/half_black"
+            android:layout_toRightOf="@+id/first_strategy_icon"
+            android:id="@+id/first_text" />
+
+
+
+
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/five_line"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/first_strategy_frame"
+        android:background="@color/grey_300"
+        />
+    <RelativeLayout
+        android:id="@+id/second_strategy_frame"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:layout_below="@+id/five_line">
+
+        <ImageView
+            android:id="@+id/second_strategy_icon"
+            android:layout_width="30dp"
+            android:layout_height="match_parent"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="耗 费 最 少 策 略"
+            android:textSize="15sp"
+            android:gravity="center"
+            android:textColor="@color/half_black"
+            android:layout_toRightOf="@+id/second_strategy_icon"/>
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/six_line"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/second_strategy_frame"
+        android:background="@color/grey_300"
+        />
+
+    <RelativeLayout
+        android:id="@+id/third_strategy_frame"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:layout_below="@+id/six_line">
+
+        <ImageView
+            android:id="@+id/third_strategy_icon"
+            android:layout_width="30dp"
+            android:layout_height="match_parent"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="限 时 花 费 策 略"
+            android:textSize="15sp"
+            android:gravity="center"
+            android:textColor="@color/half_black"
+            android:layout_toRightOf="@+id/third_strategy_icon"/>
+    </RelativeLayout>
+    <ImageView
+        android:id="@+id/seven_line"
+        android:layout_width="match_parent"
+        android:layout_height="6dp"
+        android:layout_below="@+id/third_strategy_frame"
+        android:background="@color/grey_300"
+        />
+    <RadioGroup
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/four_line"
+        android:layout_alignParentRight="true"
+
+        >
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/choose_first"
+            android:layout_marginRight="10dp"
+            />
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/choose_second"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="6dp"
+            />
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/choose_third"
+            android:layout_marginTop="4dp"
+            android:layout_marginRight="10dp"
+            />
+    </RadioGroup>
+
+    <android.support.design.widget.TextInputLayout android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/seven_line"
+        android:id="@+id/edit_frame">
+        <EditText
+            android:id="@+id/txt_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="若选择第三个策略请填写"
+            android:imeOptions="actionUnspecified"
+            android:maxLines="1"
+            android:padding="8dp"
+            android:textSize="15sp"
+            android:singleLine="true"
+            android:textColorHint="@color/half_black"
+            android:gravity="center"/>
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/edit_frame"
+        android:src="@android:drawable/ic_dialog_email"
+        android:layout_centerHorizontal="true"/>
+
+
+
+</RelativeLayout>
