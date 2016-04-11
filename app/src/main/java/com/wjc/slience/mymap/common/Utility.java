@@ -22,7 +22,7 @@ public class Utility {
     /*
          * 计算两点最短路径，传入参数为起点和终点
          */
-    public List<Way> findTheRoute(String startCity, String EndCity) {
+    public List<Way> findTheRoute(String startCity, String EndCity, int strategy) {
 
         List<Way> route = new ArrayList<Way>();
         List<Way> list = new ArrayList<Way>();

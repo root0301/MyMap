@@ -13,7 +13,10 @@ import android.widget.TextView;
 
 
 import com.wjc.slience.mymap.R;
+import com.wjc.slience.mymap.common.Utility;
+import com.wjc.slience.mymap.model.Way;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -35,6 +38,8 @@ public class ChooseActivity extends AppCompatActivity implements View.OnClickLis
     private static int mSize = 0;
     private int nameType;
     public static int STRATEGY = 0;
+    Utility utility;
+    private List<Way> ways;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +53,8 @@ public class ChooseActivity extends AppCompatActivity implements View.OnClickLis
         history = (TextView) findViewById(R.id.history_show);
         time = (EditText) findViewById(R.id.txt_time);
         rg = (RadioGroup) findViewById(R.id.rg);
+        utility = new Utility(this);
+        ways = new ArrayList<Way>();
         searchButton = (FloatingActionButton) findViewById(R.id.searchButton);
         startCity.setText("选择出发城市");
         endCity.setText("选择终点城市");
@@ -124,6 +131,7 @@ public class ChooseActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     public void onClick(View v) {
         Intent intent = new Intent(ChooseActivity.this, CityActivity.class);
+        Intent wayIntent = new Intent(ChooseActivity.this,WaysActivity.class);
         switch (v.getId()) {
             case R.id.start_text :
                 intent.putExtra("type",1);
@@ -138,7 +146,9 @@ public class ChooseActivity extends AppCompatActivity implements View.OnClickLis
                 startActivity(intent);
                 break;
             case R.id.searchButton:
-                //TODO:change to the map
+                ways = utility.findTheRoute(startCity.getText().toString().trim(), endCity.getText().toString().trim(), STRATEGY);
+                wayIntent.putExtra("ways",(ArrayList)ways);
+                startActivity(wayIntent);
                 break;
         }
     }

@@ -5,11 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.wjc.slience.mymap.CityActivity"
-    tools:showIn="@layout/activity_cities">
+    tools:context="com.wjc.slience.mymap.WaysActivity"
+    tools:showIn="@layout/aitivity_ways">
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/city_list"
+        android:id="@+id/way_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 

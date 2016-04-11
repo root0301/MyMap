@@ -1,15 +1,21 @@
 package com.wjc.slience.mymap.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.io.Serializable;
+
 /**
  * Created by slience on 2016/4/2.
  */
-public class Way {
+public class Way implements Serializable{
     private int id;
     private String start_city;
     private String end_city;
     private float start_time;
     private float end_time;
     private float cost;
+    private int all_time;
     private String vehicle;
     private String number;
 
@@ -77,4 +83,49 @@ public class Way {
     public void setNumber(String number) {
         this.number = number;
     }
+
+    public int getAll_time() {
+        return all_time;
+    }
+
+    public void setAll_time(int all_time) {
+        this.all_time = all_time;
+    }
+
+/*
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(start_city);
+        dest.writeString(end_city);
+        dest.writeString(vehicle);
+        dest.writeString(number);
+        dest.writeFloat(start_time);
+        dest.writeFloat(end_time);
+        dest.writeFloat(cost);
+    }
+
+    public static final Parcelable.Creator<Way> CREATOR = new Parcelable.ClassLoaderCreator<Way>() {
+
+        @Override
+        public Way createFromParcel(Parcel source) {
+            return new Way();
+        }
+
+        @Override
+        public Way[] newArray(int size) {
+            return new Way[0];
+        }
+
+        @Override
+        public Way createFromParcel(Parcel source, ClassLoader loader) {
+            return null;
+        }
+    };
+*/
+
 }

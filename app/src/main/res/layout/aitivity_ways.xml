@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:background="#ffffff"
+    tools:context="com.wjc.slience.mymap.MainActivity">
+
+    <include layout="@layout/toolbar"/>
+
+    <include layout="@layout/content_ways"/>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/began_travel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/search"
+        android:layout_margin="@dimen/fab_margin"
+        android:layout_gravity="bottom|end"/>
+
+    <!--        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"-->
+
+
+</android.support.design.widget.CoordinatorLayout>
