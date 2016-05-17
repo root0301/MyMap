@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.wjc.slience.mymap.R;
@@ -38,8 +39,10 @@ public class ChooseActivity extends AppCompatActivity implements View.OnClickLis
     private static int mSize = 0;
     private int nameType;
     public static int STRATEGY = 0;
+    private int limited = 0;
     Utility utility;
     private List<Way> ways;
+    private List<String> passedCityNames;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +58,7 @@ public class ChooseActivity extends AppCompatActivity implements View.OnClickLis
         rg = (RadioGroup) findViewById(R.id.rg);
         utility = new Utility(this);
         ways = new ArrayList<Way>();
+        passedCityNames = new ArrayList<String>();
         searchButton = (FloatingActionButton) findViewById(R.id.searchButton);
         startCity.setText("选择出发城市");
         endCity.setText("选择终点城市");
@@ -63,6 +67,7 @@ public class ChooseActivity extends AppCompatActivity implements View.OnClickLis
         endCity.setOnClickListener(this);
         passedCity.setOnClickListener(this);
         history.setOnClickListener(this);
+        searchButton.setOnClickListener(this);
         rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -89,7 +94,8 @@ public class ChooseActivity extends AppCompatActivity implements View.OnClickLis
         } else if (nameType == 2) {
             endText = intent.getStringExtra("name");
         } else if (nameType == 3) {
-            mSize = intent.getStringArrayListExtra("cities").size();
+            passedCityNames = intent.getStringArrayListExtra("cities");
+            mSize = passedCityNames.size();
         }
         switch (nameType) {
             case 1:
@@ -146,11 +152,63 @@ public class ChooseActivity extends AppCompatActivity implements View.OnClickLis
                 startActivity(intent);
                 break;
             case R.id.searchButton:
-                ways = utility.findTheRoute(startCity.getText().toString().trim(), endCity.getText().toString().trim(), STRATEGY);
-                wayIntent.putExtra("ways",(ArrayList)ways);
-                startActivity(wayIntent);
+                if(STRATEGY == 3) {
+                    limited = Integer.valueOf(time.getText().toString().trim());
+                }
+                //TODO: to add a progressbar here
+                if (limited>=0 && limited<10000000) {
+                    //ways = utility.findTheRoute(startCity.getText().toString().trim(), endCity.getText().toString().trim(),passedCityNames,limited ,STRATEGY);
+                    //wayIntent.putExtra("ways",(ArrayList)ways);
+                    wayIntent.putExtra("ways",(ArrayList)testWay());
+                    startActivity(wayIntent);
+
+                } else {
+                    Toast.makeText(ChooseActivity.this,"Please input the right time limited",Toast.LENGTH_SHORT).show();
+                }
+
                 break;
         }
+    }
+
+    private List<Way> testWay() {
+        List<Way> list = new ArrayList<Way>();
+        for (int i=0;i<3;i++) {
+            Way way = new Way();
+            way.setId(i);
+            switch (i) {
+                case 0:
+                    way.setStart_city("海口市");
+                    way.setEnd_city("广州市");
+                    way.setStart_time(22);
+                    way.setEnd_time(0);
+                    way.setAll_time(2);
+                    way.setCost(300);
+                    way.setVehicle("TRAIN");
+                    list.add(way);
+                    break;
+                case 1:
+                    way.setStart_city("广州市");
+                    way.setEnd_city("上海市");
+                    way.setStart_time(0);
+                    way.setEnd_time(3);
+                    way.setAll_time(3);
+                    way.setCost(500);
+                    way.setVehicle("BUS");
+                    list.add(way);
+                    break;
+                case 2:
+                    way.setStart_city("上海市");
+                    way.setEnd_city("北京市");
+                    way.setStart_time(5);
+                    way.setEnd_time(6);
+                    way.setAll_time(1);
+                    way.setCost(1200);
+                    way.setVehicle("PLANE");
+                    list.add(way);
+                    break;
+            }
+        }
+        return list;
     }
 
     @Override

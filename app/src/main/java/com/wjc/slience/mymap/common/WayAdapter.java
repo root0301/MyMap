@@ -36,10 +36,10 @@ public class WayAdapter extends RecyclerView.Adapter<WayAdapter.wayHolder> {
     public void onBindViewHolder(final WayAdapter.wayHolder holder, final int position) {
         holder.startCity.setText(list.get(position).getStart_city());
         holder.endCity.setText(list.get(position).getEnd_city());
-        holder.startTime.setText(Float.toString(list.get(position).getStart_time()));
-        holder.endTime.setText(Float.toString(list.get(position).getEnd_time()));
+        holder.startTime.setText(Integer.toString((int) list.get(position).getStart_time())+"时");
+        holder.endTime.setText(Integer.toString((int) list.get(position).getEnd_time())+"时");
         holder.money.setText(Float.toString(list.get(position).getCost()));
-        holder.time.setText(Integer.toString(list.get(position).getAll_time()));
+        holder.time.setText(Integer.toString(list.get(position).getAll_time())+"小时");
 
         if (mOnItemClickListener == null) {
             holder.itemView.setOnClickListener(new View.OnClickListener() {

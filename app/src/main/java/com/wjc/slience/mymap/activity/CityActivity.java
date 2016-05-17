@@ -13,6 +13,7 @@ import android.view.View;
 
 import com.wjc.slience.mymap.R;
 import com.wjc.slience.mymap.common.CityAdapter;
+import com.wjc.slience.mymap.model.City;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,12 +24,11 @@ import java.util.List;
  */
 public class CityActivity extends AppCompatActivity {
 
-    RecyclerView cityList;
-    CityAdapter adapter;
-    List<String> data;
+    private RecyclerView cityList;
+    private CityAdapter adapter;
+    private List<String> data;
     private int mType;
-    List<String> cities;
-    private int mSize;
+    private List<String> cities;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +47,7 @@ public class CityActivity extends AppCompatActivity {
 
     private void initData() {
         data = new ArrayList<String>(Arrays.asList("北京","上海","海南"));
+        //TODO:get the city name from Utility
     }
 
     @Override

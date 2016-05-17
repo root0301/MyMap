@@ -14,11 +14,24 @@ public class Way implements Serializable{
     private String end_city;
     private float start_time;
     private float end_time;
-    private float cost;
     private int all_time;
+    private float cost;
     private String vehicle;
     private String number;
 
+    public Way() {
+    }
+
+    public Way(String start_city, String end_city, float start_time, float end_time, int all_time, float cost, String vehicle, String number) {
+        this.start_city = start_city;
+        this.end_city = end_city;
+        this.start_time = start_time;
+        this.end_time = end_time;
+        this.cost = cost;
+        this.all_time = all_time;
+        this.vehicle = vehicle;
+        this.number = number;
+    }
 
     public int getId() {
         return id;

@@ -55,6 +55,9 @@ public class MyMapOpenHelper extends SQLiteOpenHelper {
             + "vehicle text"
             + "number text)";
 
+    public static final String CREATE_CITY = "create table city("
+            + "id integer primary key autoincrement,"
+            + "name text)";
 
 
     public MyMapOpenHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
@@ -67,6 +70,7 @@ public class MyMapOpenHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TRAIN);
         db.execSQL(CREATE_BUS);*/
         db.execSQL(CREATE_ROUTE);
+        db.execSQL(CREATE_CITY);
     }
 
     @Override
