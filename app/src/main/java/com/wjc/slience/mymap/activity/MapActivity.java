@@ -1,11 +1,18 @@
 package com.wjc.slience.mymap.activity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.amap.api.maps2d.AMap;
 import com.amap.api.maps2d.CameraUpdate;
@@ -13,17 +20,15 @@ import com.amap.api.maps2d.CameraUpdateFactory;
 import com.amap.api.maps2d.MapView;
 import com.amap.api.maps2d.model.BitmapDescriptorFactory;
 import com.amap.api.maps2d.model.LatLng;
-import com.amap.api.maps2d.model.Marker;
+
 import com.amap.api.maps2d.model.MarkerOptions;
 import com.amap.api.maps2d.model.PolylineOptions;
 import com.wjc.slience.mymap.R;
+import com.wjc.slience.mymap.common.ActivityCollector;
 import com.wjc.slience.mymap.model.City;
 import com.wjc.slience.mymap.model.Way;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -43,10 +48,15 @@ public class MapActivity extends AppCompatActivity {
     private static String NEXT_CITY =" ";
     private static int wayId = 0;
     private static int icon = 0;
+    private int currentTime = -1;
     private static boolean running = false;
     private static double lonAdd = 0;
     private static double LatAdd = 0;
     private LatLng pos;
+    private TextView timeMessage;
+    private TextView wayMessage;
+    private FloatingActionButton stop;
+    private int flag = 100;
     Timer timer;
 
 
@@ -54,8 +64,12 @@ public class MapActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.acitvity_map);
+        ActivityCollector.getInstance().addActivity(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        timeMessage = (TextView) findViewById(R.id.time_message);
+        wayMessage = (TextView) findViewById(R.id.way_message);
         mapView = (MapView) findViewById(R.id.map);
+        stop = (FloatingActionButton) findViewById(R.id.stop);
         ways = new ArrayList<Way>();
         cities = new ArrayList<City>();
         mapView.onCreate(savedInstanceState);
@@ -69,12 +83,58 @@ public class MapActivity extends AppCompatActivity {
         Intent waysIntent = getIntent();
         ways = (ArrayList<Way>)waysIntent.getSerializableExtra("ways");
         cities = (ArrayList<City>)waysIntent.getSerializableExtra("city");
+        currentTime = waysIntent.getIntExtra("time", -1);
+        if (currentTime!=-1) {
+            CURRENT_TIME = currentTime;
+        }
+        timeMessage.setText("当前时间:" + CURRENT_TIME + ":00");
+/*        wayMessage.setText(ways.get(wayId).getStart_time()+"时从"+ways.get(wayId).getStart_city()+"出发，历经"+ways.get(wayId).getAll_time()
+                +"时于"+ways.get(wayId).getEnd_time()+"时到达"+ways.get(wayId).getEnd_city());*/
         NEXT_CITY = cities.get(0).getName();
+        wayId = 0;
         pos = new LatLng(cities.get(0).getLat(),cities.get(0).getLng());
         icon = chooseTheIcon(0);
         addCityTags();
         timeChange();
+        stop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog();
+            }
+        });
+
     }
+    private void dialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("修改路线");
+        builder.setMessage("确认修改？");
+        builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                if (running==false) {
+                    timer.cancel();
+                    Intent intent = new Intent(MapActivity.this,ChooseActivity.class);
+                    intent.putExtra("type",4);
+                    intent.putExtra("time",CURRENT_TIME);
+                    intent.putExtra("name", ways.get(wayId).getStart_city());
+                    startActivity(intent);
+                    finish();
+                } else {
+                    Toast.makeText(MapActivity.this,"在路途中尚不可变更，到达下一城市将为你重新选择路线",Toast.LENGTH_SHORT).show();
+                    flag = (int) ways.get(wayId).getEnd_time();
+                }
+            }
+        });
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.show();
+    }
+
 
     private void timeChange() {
         timer = new Timer();
@@ -85,6 +145,12 @@ public class MapActivity extends AppCompatActivity {
                 updateTag();
                 if (SECOND == 0) {
                     CURRENT_TIME = (CURRENT_TIME + 1) % 24;
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            timeMessage.setText("当前时间:" + CURRENT_TIME );
+                        }
+                    });
                     if (CURRENT_TIME == 0) {
                         CURRENT_DATE = (CURRENT_DATE + 1) % 7;
                     }
@@ -95,7 +161,23 @@ public class MapActivity extends AppCompatActivity {
 
     private void updateTag() {
        //TODO: update the tags
-        System.out.println("the current time is " + CURRENT_TIME);
+
+        if (wayId == ways.size()-1 && CURRENT_TIME == ways.get(wayId).getEnd_time()) {
+            timer.cancel();
+            Intent intent = new Intent(MapActivity.this,ChooseActivity.class);
+            startActivity(intent);
+            finish();
+        }
+
+        if (CURRENT_TIME == flag) {
+            timer.cancel();
+            Intent intent = new Intent(MapActivity.this,ChooseActivity.class);
+            intent.putExtra("type",4);
+            intent.putExtra("time",CURRENT_TIME);
+            intent.putExtra("name", ways.get(wayId).getEnd_city());
+            startActivity(intent);
+            finish();
+        }
         if (CURRENT_TIME == ways.get(wayId).getStart_time()) {
             running = true;
         }
@@ -106,7 +188,9 @@ public class MapActivity extends AppCompatActivity {
                 LatLng current = new LatLng(cities.get(wayId+1).getLat(),cities.get(wayId+1).getLng());
                 pos = current;
                 wayId++;
-                icon = chooseTheIcon(wayId);
+                if (wayId<=ways.size()-1) {
+                    icon = chooseTheIcon(wayId);
+                }
             } else calculateCurrentLocation();
             //addCityTags();
             CameraUpdate cu = CameraUpdateFactory.changeLatLng(pos);
@@ -118,8 +202,8 @@ public class MapActivity extends AppCompatActivity {
             //添加marker
             aMap.addMarker(markerOptions);
             System.out.println("--------------------------------------");
-        }
     }
+}
 
     private void calculateCurrentLocation() {
         LatAdd = (cities.get(wayId+1).getLat() - cities.get(wayId).getLat())/(ways.get(wayId).getAll_time()*10);
@@ -158,11 +242,11 @@ public class MapActivity extends AppCompatActivity {
     }
 
     private int chooseTheIcon(int i) {
-        if (ways.get(i).getVehicle().equals("BUS")) {
+        if (ways.get(i).getVehicle().equals("汽车")) {
             return R.drawable.bus;
-        } else if (ways.get(i).getVehicle().equals("TRAIN")) {
+        } else if (ways.get(i).getVehicle().equals("火车")) {
             return R.drawable.train;
-        } else if (ways.get(i).getVehicle().equals("PLANE")) {
+        } else if (ways.get(i).getVehicle().equals("飞机")) {
             return R.drawable.plane;
         }
         return 0;
@@ -192,4 +276,11 @@ public class MapActivity extends AppCompatActivity {
         mapView.onSaveInstanceState(outState);
     }
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            dialog();
+        }
+        return super.onKeyDown(keyCode, event);
+    }
 }

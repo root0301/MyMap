@@ -17,11 +17,15 @@ import com.amap.api.services.geocoder.GeocodeResult;
 import com.amap.api.services.geocoder.GeocodeSearch;
 import com.amap.api.services.geocoder.RegeocodeResult;
 import com.wjc.slience.mymap.R;
+import com.wjc.slience.mymap.common.ActivityCollector;
+import com.wjc.slience.mymap.common.LogUtil;
 import com.wjc.slience.mymap.common.WayAdapter;
 import com.wjc.slience.mymap.model.City;
 import com.wjc.slience.mymap.model.Way;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -37,18 +41,20 @@ public class WaysActivity extends AppCompatActivity {
     FloatingActionButton search;
     GeocodeSearch geocodeSearch;
     private static int COUNT = 0;
+    private int currentTime = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.aitivity_ways);
+        ActivityCollector.getInstance().addActivity(this);
         search = (FloatingActionButton) findViewById(R.id.began_travel);
         list = new ArrayList<Way>();
         cities = new ArrayList<City>();
         Intent intent = getIntent();
         list =  (ArrayList<Way>) getIntent().getSerializableExtra("ways");
+        currentTime = intent.getIntExtra("time",-1);
         setCities();
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("路线预览");
         setSupportActionBar(toolbar);
@@ -77,6 +83,7 @@ public class WaysActivity extends AppCompatActivity {
                     mapIntent.putExtra("city", (ArrayList) cities);
                     System.out.println("解析完成----------------------------------");
                     Toast.makeText(WaysActivity.this, "解析完成", Toast.LENGTH_SHORT).show();
+                    COUNT = 0;
                 }
             }
         });
@@ -84,10 +91,16 @@ public class WaysActivity extends AppCompatActivity {
         search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (currentTime != -1) {
+                    mapIntent.putExtra("time", currentTime);
+                }
                 startActivity(mapIntent);
             }
         });
+        recordIntoFile();
+
     }
+
 
     private void setCities() {
         for (int i=0;i<list.size();i++) {
@@ -115,6 +128,22 @@ public class WaysActivity extends AppCompatActivity {
         adapter = new WayAdapter(this,list);
         recyclerView.setAdapter(adapter);
     }
+
+    private void recordIntoFile() {
+        Date now = new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        String time = dateFormat.format(now);
+        //LogUtil.getInstance().debug(time + " 时查询结果如下:");
+        LogUtil.getInstance().writeIntoFile(time + " 时查询结果如下:");
+        for (int i=0; i<list.size();i++) {
+            String info = new String(list.get(i).getStart_time()+"时从"+list.get(i).getStart_city()+"出发，历经"+list.get(i).getAll_time()
+                    +"时于"+list.get(i).getEnd_time()+"时到达"+list.get(i).getEnd_city()+"，花费"+list.get(i).getCost()+"元");
+           // LogUtil.getInstance().debug(info);
+            LogUtil.getInstance().writeIntoFile(info);
+        }
+    }
+
+
 
     @Override
     protected void onResume() {

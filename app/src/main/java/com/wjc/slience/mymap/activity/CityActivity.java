@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.wjc.slience.mymap.R;
+import com.wjc.slience.mymap.common.ActivityCollector;
 import com.wjc.slience.mymap.common.CityAdapter;
 import com.wjc.slience.mymap.model.City;
 
@@ -34,6 +35,7 @@ public class CityActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cities);
+        ActivityCollector.getInstance().addActivity(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("城市选择");
         setSupportActionBar(toolbar);
