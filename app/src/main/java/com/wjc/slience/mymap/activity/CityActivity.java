@@ -21,7 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Created by slience on 2016/4/3.
+ * 选择城市
  */
 public class CityActivity extends AppCompatActivity {
 
@@ -65,6 +65,7 @@ public class CityActivity extends AppCompatActivity {
         cityList.setLayoutManager(new LinearLayoutManager(this));
         adapter = new CityAdapter(this,data,t);
         adapter.setOnItemClickListener(new CityAdapter.OnItemClickListener() {
+            //判断是否应该出现复选框
             @Override
             public void onItemClick(View view, int position) {
                 if (mType == 1 || mType == 2) {

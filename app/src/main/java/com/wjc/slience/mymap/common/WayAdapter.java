@@ -13,7 +13,7 @@ import com.wjc.slience.mymap.model.Way;
 import java.util.List;
 
 /**
- * Created by slience on 2016/4/11.
+ * 路线列表适配器
  */
 public class WayAdapter extends RecyclerView.Adapter<WayAdapter.wayHolder> {
 
@@ -32,6 +32,9 @@ public class WayAdapter extends RecyclerView.Adapter<WayAdapter.wayHolder> {
         return new wayHolder(layoutInflater.inflate(R.layout.way_item,parent,false));
     }
 
+    /**
+     *  绑定wayHolder
+     */
     @Override
     public void onBindViewHolder(final WayAdapter.wayHolder holder, final int position) {
         holder.startCity.setText(list.get(position).getStart_city());

@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Created by slience on 2016/5/18.
+ * activity容器类
  */
 public class ActivityCollector extends Application {
 
@@ -31,7 +31,7 @@ public class ActivityCollector extends Application {
         activityList.add(activity);
     }
 
-    //遍历所有Activity并finish
+    //遍历所有Activity并finish，调用此方法可退出程序
     public void exit(){
         for(Activity activity:activityList) {
             activity.finish();

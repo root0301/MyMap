@@ -6,7 +6,7 @@ import android.os.Parcelable;
 import java.io.Serializable;
 
 /**
- * Created by slience on 2016/4/2.
+ * 路线类
  */
 public class Way implements Serializable{
     private int id;

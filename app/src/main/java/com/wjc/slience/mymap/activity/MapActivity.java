@@ -34,7 +34,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 /**
- * Created by slience on 2016/4/14.
+ * 运行界面
  */
 public class MapActivity extends AppCompatActivity {
 
@@ -85,12 +85,13 @@ public class MapActivity extends AppCompatActivity {
         cities = (ArrayList<City>)waysIntent.getSerializableExtra("city");
         currentTime = waysIntent.getIntExtra("time", -1);
         if (currentTime!=-1) {
+            //设置系统时间
             CURRENT_TIME = currentTime;
         }
         timeMessage.setText("当前时间:" + CURRENT_TIME + ":00");
 /*        wayMessage.setText(ways.get(wayId).getStart_time()+"时从"+ways.get(wayId).getStart_city()+"出发，历经"+ways.get(wayId).getAll_time()
                 +"时于"+ways.get(wayId).getEnd_time()+"时到达"+ways.get(wayId).getEnd_city());*/
-        NEXT_CITY = cities.get(0).getName();
+        //设置marker的初始值
         wayId = 0;
         pos = new LatLng(cities.get(0).getLat(),cities.get(0).getLng());
         icon = chooseTheIcon(0);
@@ -104,6 +105,10 @@ public class MapActivity extends AppCompatActivity {
         });
 
     }
+
+    /**
+     * 中途修改路线弹出的对话框
+     */
     private void dialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("修改路线");
@@ -113,6 +118,7 @@ public class MapActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
                 if (running==false) {
+                    //处于停止状态，可直接进行路线选择
                     timer.cancel();
                     Intent intent = new Intent(MapActivity.this,ChooseActivity.class);
                     intent.putExtra("type",4);
@@ -121,6 +127,7 @@ public class MapActivity extends AppCompatActivity {
                     startActivity(intent);
                     finish();
                 } else {
+                    //处在行程中，需要等到到达下一个城市后，才可进行路线选择
                     Toast.makeText(MapActivity.this,"在路途中尚不可变更，到达下一城市将为你重新选择路线",Toast.LENGTH_SHORT).show();
                     flag = (int) ways.get(wayId).getEnd_time();
                 }
@@ -135,7 +142,9 @@ public class MapActivity extends AppCompatActivity {
         builder.show();
     }
 
-
+    /**
+     * 计时器，每过1秒执行一次，执行十次后，CURRENT_TIME推进到下一小时
+     */
     private void timeChange() {
         timer = new Timer();
         timer.schedule(new TimerTask() {
@@ -145,12 +154,14 @@ public class MapActivity extends AppCompatActivity {
                 updateTag();
                 if (SECOND == 0) {
                     CURRENT_TIME = (CURRENT_TIME + 1) % 24;
+                    //子线程不能更新UI，调用 runOnUiThread 进行UI的更新
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             timeMessage.setText("当前时间:" + CURRENT_TIME );
                         }
                     });
+                    //到达0点，天数加一
                     if (CURRENT_TIME == 0) {
                         CURRENT_DATE = (CURRENT_DATE + 1) % 7;
                     }
@@ -159,9 +170,12 @@ public class MapActivity extends AppCompatActivity {
         }, 0, 1000);
     }
 
-    private void updateTag() {
-       //TODO: update the tags
 
+    /**
+     *  根据时间的推进，更新用户所处的位置
+     */
+    private void updateTag() {
+        //到达终点，旅行结束，返回首页
         if (wayId == ways.size()-1 && CURRENT_TIME == ways.get(wayId).getEnd_time()) {
             timer.cancel();
             Intent intent = new Intent(MapActivity.this,ChooseActivity.class);
@@ -169,6 +183,7 @@ public class MapActivity extends AppCompatActivity {
             finish();
         }
 
+        //用户点击了更改路线的按钮，但处于行程中，一旦到达下一城市，就跳转到路线选择界面
         if (CURRENT_TIME == flag) {
             timer.cancel();
             Intent intent = new Intent(MapActivity.this,ChooseActivity.class);
@@ -178,11 +193,15 @@ public class MapActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         }
+        //当前时间等于路线的开始时间，running状态设置为true
         if (CURRENT_TIME == ways.get(wayId).getStart_time()) {
             running = true;
         }
 
+        //如果处于运行状态，设置pos的相关属性
         if (running) {
+            //当前时间为到达时间，运行状态设置为false，设置用户的位置为路线的到达城市；
+            //否则计算用户的位置
             if (CURRENT_TIME==ways.get(wayId).getEnd_time()) {
                 running = false;
                 LatLng current = new LatLng(cities.get(wayId+1).getLat(),cities.get(wayId+1).getLng());
@@ -201,10 +220,12 @@ public class MapActivity extends AppCompatActivity {
             MarkerOptions markerOptions = new MarkerOptions().position(pos).icon(BitmapDescriptorFactory.fromResource(icon)).draggable(true);
             //添加marker
             aMap.addMarker(markerOptions);
-            System.out.println("--------------------------------------");
     }
 }
 
+    /**
+     *  计算用户的位置； 根据初始城市和要达到城市的经纬度，计算速度 LatAdd 和 LonAdd ，同时更新pos的位置
+     */
     private void calculateCurrentLocation() {
         LatAdd = (cities.get(wayId+1).getLat() - cities.get(wayId).getLat())/(ways.get(wayId).getAll_time()*10);
         lonAdd = (cities.get(wayId+1).getLng() - cities.get(wayId).getLng())/(ways.get(wayId).getAll_time()*10);
@@ -212,6 +233,7 @@ public class MapActivity extends AppCompatActivity {
         pos = current;
     }
 
+    //在地图上绘制出用户的路线
     private void addCityTags() {
         PolylineOptions polys = new PolylineOptions();
         for (int  i=0;i<cities.size();i++) {
@@ -232,7 +254,9 @@ public class MapActivity extends AppCompatActivity {
         }
     }
 
-
+    /**
+     * 初始化地图
+     */
     private void initAMap() {
         if(aMap == null) {
             aMap = mapView.getMap();
@@ -241,6 +265,9 @@ public class MapActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     *  判断使用的那种交通工具
+     */
     private int chooseTheIcon(int i) {
         if (ways.get(i).getVehicle().equals("汽车")) {
             return R.drawable.bus;
@@ -276,6 +303,9 @@ public class MapActivity extends AppCompatActivity {
         mapView.onSaveInstanceState(outState);
     }
 
+    /**
+     *  点击返回键时，弹出是否改变路线的选择
+     */
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {

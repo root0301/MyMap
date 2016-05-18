@@ -3,7 +3,7 @@ package com.wjc.slience.mymap.model;
 import java.io.Serializable;
 
 /**
- * Created by slience on 2016/4/12.
+ * 城市类
  */
 public class City implements Serializable {
 

@@ -64,6 +64,9 @@ public class MyMapDB {
         }
     }
 
+    /**
+     * 通过起始城市获取到所有以该城市为起点的路线
+     */
     public List<Way> loadWayByStartCity(String startCity) {
         List<Way> list = new ArrayList<Way>();
         Cursor cursor = db.query("Route",null,"start_city = ?",new String[]{String.valueOf(startCity)},null,null,null);
@@ -87,6 +90,9 @@ public class MyMapDB {
         return list;
     }
 
+    /**
+     * 从数据库中获取所有的城市
+     */
     public List<City> loadAllCity() {
         List<City> list = new ArrayList<City>();
         Cursor cursor = db.query("city",null,null,null,null,null,null);
@@ -104,6 +110,9 @@ public class MyMapDB {
         return list;
     }
 
+    /**
+     * 通过ID从数据库中获取相应的路线
+     */
     public Way loadWayById(int wayID) {
         Way way = new Way();
         Cursor cursor = db.query("city",null,"id = ?", new String[]{String.valueOf(wayID)},null,null,null);

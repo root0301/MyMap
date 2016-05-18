@@ -29,7 +29,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created by slience on 2016/4/7.
+ * 路线预览
  */
 public class WaysActivity extends AppCompatActivity {
 
@@ -61,6 +61,7 @@ public class WaysActivity extends AppCompatActivity {
         final Intent mapIntent = new Intent(WaysActivity.this, MapActivity.class);
         mapIntent.putExtra("ways", (ArrayList) list);
         init();
+        //根据名称进行解析，得到经纬度
         geocodeSearch = new GeocodeSearch(this);
         geocodeSearch.setOnGeocodeSearchListener(new GeocodeSearch.OnGeocodeSearchListener() {
             @Override
@@ -79,9 +80,9 @@ public class WaysActivity extends AppCompatActivity {
                         break;
                     }
                 }
+                //解析完成
                 if (COUNT == cities.size()) {
                     mapIntent.putExtra("city", (ArrayList) cities);
-                    System.out.println("解析完成----------------------------------");
                     Toast.makeText(WaysActivity.this, "解析完成", Toast.LENGTH_SHORT).show();
                     COUNT = 0;
                 }
@@ -101,7 +102,9 @@ public class WaysActivity extends AppCompatActivity {
 
     }
 
-
+    /**
+     * 生产一个带有所有途径城市的list容器
+     */
     private void setCities() {
         for (int i=0;i<list.size();i++) {
             City city = new City();
@@ -115,6 +118,9 @@ public class WaysActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     *  设置城市的经纬度
+     */
     private void setLngAndLat() {
         for (int i =0; i<cities.size(); i++) {
             GeocodeQuery query = new GeocodeQuery(cities.get(i).getName(),cities.get(i).getName());
@@ -122,6 +128,9 @@ public class WaysActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     *  初始化列表
+     */
     private void init() {
         recyclerView = (RecyclerView) findViewById(R.id.way_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -129,6 +138,9 @@ public class WaysActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
     }
 
+    /**
+     *  若生成了查询结果，则将结果存入文件中
+     */
     private void recordIntoFile() {
         Date now = new Date();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");

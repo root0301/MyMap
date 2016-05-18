@@ -8,7 +8,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 /**
- * Created by slience on 2016/5/18.
+ * 调试和日志信息打印类
  */
 public class LogUtil {
 
@@ -24,6 +24,7 @@ public class LogUtil {
 
     public int level = DEBUG;
 
+    //单例模式中获取唯一的MyApplication实例
     public static LogUtil getInstance() {
         if (sLogUtil == null) {
             synchronized (LogUtil.class) {
@@ -53,6 +54,9 @@ public class LogUtil {
         }
     }
 
+    /**
+     * 将查询结果写进文件
+     */
     public void writeIntoFile(String msg) {
         File file = new File("/sdcard","TripLog.txt");
         try {
@@ -67,6 +71,9 @@ public class LogUtil {
         }
     }
 
+    /**
+     * 从文件中读取出查询记录
+     */
     public String readTheTrip() {
         File file = new File("/sdcard","TripLog.txt");
         String line = "";

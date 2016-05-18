@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by slience on 2016/4/2.
+ * 首页，路线选择
  */
 public class ChooseActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -37,6 +37,7 @@ public class ChooseActivity extends AppCompatActivity implements View.OnClickLis
     RadioGroup rg;
     EditText time;
     FloatingActionButton searchButton;
+    Utility utility;
     private static String startText = null;
     private static String endText = null;
     private static int mSize = 0;
@@ -44,11 +45,10 @@ public class ChooseActivity extends AppCompatActivity implements View.OnClickLis
     private int currentTime = -1;
     public static int STRATEGY = 0;
     private int limited = 0;
-    Utility utility;
-    private List<Way> ways;
-    private List<String> passedCityNames;
     private static Boolean isQuit = false;
     private long mExitTime = 0;
+    private List<Way> ways;
+    private List<String> passedCityNames;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,6 +93,9 @@ public class ChooseActivity extends AppCompatActivity implements View.OnClickLis
         });
     }
 
+    /**
+     *  设置起点终点的TextView
+     */
     public void setCityText() {
         Intent intent = getIntent();
         nameType = intent.getIntExtra("type", -1);
@@ -147,6 +150,9 @@ public class ChooseActivity extends AppCompatActivity implements View.OnClickLis
         setCityText();
     }
 
+    /**
+     * 事件的触发
+     */
     @Override
     public void onClick(View v) {
         Intent intent = new Intent(ChooseActivity.this, CityActivity.class);
@@ -235,6 +241,9 @@ public class ChooseActivity extends AppCompatActivity implements View.OnClickLis
         super.onDestroy();
     }
 
+    /**
+     * 退出操作
+     */
       @Override
   public boolean onKeyDown(int keyCode, KeyEvent event) {
       if (keyCode == KeyEvent.KEYCODE_BACK) {

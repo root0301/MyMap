@@ -16,7 +16,7 @@ import java.util.List;
 
 
 /**
- * Created by Administrator on 2016/2/6.
+ * 城市列表适配器
  */
 public class CityAdapter extends RecyclerView.Adapter<CityAdapter.cityHolder> {
 
@@ -39,6 +39,9 @@ public class CityAdapter extends RecyclerView.Adapter<CityAdapter.cityHolder> {
         return new cityHolder(layoutInflater.inflate(R.layout.city_item, parent, false), mType);
     }
 
+    /**
+     * 绑定cityHolder
+     */
     @Override
     public void onBindViewHolder(final cityHolder holder, final int position) {
 

@@ -13,7 +13,7 @@ import com.wjc.slience.mymap.common.LogUtil;
 import org.w3c.dom.Text;
 
 /**
- * Created by slience on 2016/5/18.
+ * 日志信息页面显示
  */
 public class MsgActivity extends Activity {
 
