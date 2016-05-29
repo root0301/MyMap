@@ -18,6 +18,9 @@ public class Way implements Serializable{
     private float cost;
     private String vehicle;
     private String number;
+    private Way next;
+    private int week_day;
+    private int end_id;
 
     public Way() {
     }
@@ -103,6 +106,30 @@ public class Way implements Serializable{
 
     public void setAll_time(int all_time) {
         this.all_time = all_time;
+    }
+
+    public Way getNext() {
+        return next;
+    }
+
+    public void setNext(Way next) {
+        this.next = next;
+    }
+
+    public int getWeek_day() {
+        return week_day;
+    }
+
+    public void setWeek_day(int week_day) {
+        this.week_day = week_day;
+    }
+
+    public int getEnd_id() {
+        return end_id;
+    }
+
+    public void setEnd_id(int end_id) {
+        this.end_id = end_id;
     }
 
 /*

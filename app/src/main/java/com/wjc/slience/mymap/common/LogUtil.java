@@ -54,8 +54,9 @@ public class LogUtil {
         }
     }
 
-    /**
-     * 将查询结果写进文件
+    /*
+     * @param msg 写入的信息
+     * @Description 将查询结果写进文件
      */
     public void writeIntoFile(String msg) {
         File file = new File("/sdcard","TripLog.txt");
@@ -71,8 +72,8 @@ public class LogUtil {
         }
     }
 
-    /**
-     * 从文件中读取出查询记录
+    /*
+     * @Description 从文件中读取出查询记录
      */
     public String readTheTrip() {
         File file = new File("/sdcard","TripLog.txt");

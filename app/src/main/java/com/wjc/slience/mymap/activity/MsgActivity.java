@@ -9,8 +9,13 @@ import android.widget.TextView;
 import com.wjc.slience.mymap.R;
 import com.wjc.slience.mymap.common.ActivityCollector;
 import com.wjc.slience.mymap.common.LogUtil;
+import com.wjc.slience.mymap.db.MyMapDB;
+import com.wjc.slience.mymap.model.Way;
 
 import org.w3c.dom.Text;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 日志信息页面显示
@@ -29,6 +34,7 @@ public class MsgActivity extends Activity {
         msgTxt = LogUtil.getInstance().readTheTrip();
         msg.setText(msgTxt);
     }
+
 
     @Override
     protected void onResume() {

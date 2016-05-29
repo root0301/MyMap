@@ -7,7 +7,13 @@ import com.wjc.slience.mymap.model.City;
 import com.wjc.slience.mymap.model.Way;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Queue;
+import java.util.Stack;
 
 /**
  * 路线计算类
@@ -18,180 +24,450 @@ public class Utility {
     private String startCity;
     private String endCity;
     private List<String> passedCity;
-    private int limited;
     private static int STRATEGY;
     private List<Way> route;
+    List<Way> ways;
     private List<City> allCity;
+    private Way adjCity[] = new Way[20];
+    private String recordString[][] = new String[200][200];
+    private int recordInt[][] = new int[200][200];
+
+    private int limited;
+    private int startState;
+    private int endState;
+    private int passedState;
+    private int sTime;
+    private int sDate;
+
+    private int leastCost;
+    private int leastTime;
+    private static final int MAX = 100000000;
+    private static final int MAX_CITY = 15;
 
     public Utility(Context context) {
         myMapDB = MyMapDB.getInstance(context);
     }
 
+
     /*
-     * 计算两点最短路径，传入参数为起点和终点
-     */
-    public List<Way> findTheRoute(String start, String end, List<String> passed, int li, int strategy) {
+ *  @param start 起始城市
+ *  @param end   终点城市
+ *  @param passed 途径城市集合
+ *  @param li 选择第三个策略时的限制
+ *  @param strategy 选择的策略
+ *  @Description 根据传入的参数计算最优路线
+ */
+    public List<Way> findTheRoute(String start, String end, List<String> passed, int li, int strategy,int cTime) {
         route = new ArrayList<Way>();
         allCity = new ArrayList<City>();
         startCity = start;
         endCity = end;
         passedCity = passed;
         limited = li;
+        STRATEGY = strategy;
         allCity = myMapDB.loadAllCity();
-        switch (strategy) {
+        startState = cityNameId(startCity);
+        endState = cityNameId(endCity);
+        passedState = 0;
+        for (int i=0;i<passed.size();i++) {
+            int c = cityNameId(passed.get(i));
+            int state = 1<<c;
+            passedState += state;
+        }
+        Calendar calendar = Calendar.getInstance();
+        if (cTime==-1)
+            sTime = calendar.get(Calendar.HOUR_OF_DAY);
+        else
+            sTime = cTime;
+        sDate = calendar.get(Calendar.DAY_OF_WEEK);
+        initGraph();
+
+        switch (STRATEGY) {
             case 1:
-                findTheTimeShortestRoute();
+                findTheTimeLeastRoute();
                 break;
             case 2:
                 findTheCostLeastRoute();
                 break;
             case 3:
-                findTheSuitableRoute();
+                findTheCostLeastRoute();
                 break;
         }
-
         return route;
     }
 
-    private void findTheTimeShortestRoute() {
-        List<String> allRoute = new ArrayList<String>();
-        List<Way> temp = new ArrayList<Way>();
-        int [][] wayRecord = new int[20][20];
-        float [] costRecord = new float[20];
-        float theShort = 0;
-        String startNode = startCity;
-        String nextNode = " ";
-        int startId, endId;
-        //TODO:初始化costRecord和wayRecord数组全为-1
-        for (int k=0;k<costRecord.length;k++) {
-            if (k!=cityNameId(startCity)) {
-                costRecord[k] = 1000000;
-            } else costRecord[k] = 0;
-        }
-        for(int r=0;r<wayRecord.length;r++)
-            for (int c=0;c<wayRecord[0].length;c++) {
-                wayRecord[r][c] = -1;
-            }
+    /**
+     * @Description 在城市之间添加路线
+     * @param id 路线的id
+     * @param weekDay 路线的日期
+     * @param startTime 路线开始的时间
+     * @param startId 路线开始城市的id
+     * @param arriveTime 路线到达的时间
+     * @param nextId 路线到达的下一个城市的id
+     * @param cost 路线的费用
+     */
+    public void addWay(int id, int weekDay, float startTime,int startId, float arriveTime,int nextId,float cost) {
+        Way way = new Way();
+        way.setId(id);
+        way.setStart_time(startTime);
+        way.setEnd_time(arriveTime);
+        way.setCost(cost);
+        way.setWeek_day(weekDay);
+        way.setEnd_id(nextId);
+        way.setNext(adjCity[startId]);
+        way.setEnd_id(nextId);
+        adjCity[startId] = way;
 
-        while(!(allRoute.contains(startCity)&&allRoute.contains(endCity))) {
-            startNode = startCity;
-            temp = myMapDB.loadWayByStartCity(startNode);
-            startId = cityNameId(startNode);
-            theShort = costRecord[startId];
-            for (int i=0;i<temp.size();i++) {
-                nextNode = temp.get(i).getEnd_city();
-                endId = cityNameId(nextNode);
-                float currentTime = theShort;
-                while(currentTime >= 24){
-                    currentTime -= 24;
-                }
-                float compare;
-                if (temp.get(i).getEnd_time()-currentTime>=0) {
-                    compare = temp.get(i).getEnd_time() - currentTime;
-                } else compare = (temp.get(i).getEnd_time()-currentTime)%24;
-
-                if (compare>=temp.get(i).getAll_time()) {
-                    float add = 0;
-                    if (temp.get(i).getEnd_time() > currentTime)
-                        add = temp.get(i).getEnd_time() - currentTime;
-                    else add = (temp.get(i).getEnd_time()-currentTime)%24;
-                    if (add+theShort < costRecord[endId]) {
-                        costRecord[endId] = add + theShort;
-                     //TODO: 将wayRecord[startId]中的内容复制到wayRecord[endId],且将wayRecord[endId]的最后一个数修改成temp(i)对应的路线id
-                    int last = 0;
-                    for (int l=0;l<wayRecord[startId].length;l++) {
-                        if (wayRecord[startId][l] >=0) {
-                            wayRecord[endId][l] = wayRecord[startId][l];
-                        } else {
-                            last = l;
-                            break;
-                        }
-                    }
-                    wayRecord[endId][last] = temp.get(i).getId();                   }
-                }
-            }
-            float min = 100000;
-                int id = 0;
-                for (int j=0; j<costRecord.length;j++) {
-                    if(!(allRoute.contains(cityIdName(j)))) {
-                        if(min > costRecord[j]) {
-                            min = costRecord[j];
-                            id = j;
-                        }
-                    }
-                }
-                 startNode = nextNode;
-        }
-        putIntoRoute(wayRecord[cityNameId(endCity)]);
     }
 
-    private void findTheCostLeastRoute() {
-        List<String> allRoute = new ArrayList<String>();
-        List<Way> temp = new ArrayList<Way>();
-        int [][] wayRecord = new int[20][20];
-        float [] costRecord = new float[20];
-        float theShort = 0;
-        String startNode = startCity;
-        String nextNode = " ";
-        int startId, endId;
-        //TODO:初始化costRecord和wayRecord数组全为-1
-        for (int k=0;k<costRecord.length;k++) {
-            if (k!=cityNameId(startCity)) {
-                costRecord[k] = 1000000;
-            } else costRecord[k] = 0;
-        }
-        for(int r=0;r<wayRecord.length;r++)
-            for (int c=0;c<wayRecord[0].length;c++) {
-                wayRecord[r][c] = -1;
-            }
-        while(!(allRoute.contains(startCity)&&allRoute.contains(endCity))) {
-            temp = myMapDB.loadWayByStartCity(startNode);
-            startId = cityNameId(startNode);
-            theShort = costRecord[startId];
-            for (int i=0; i<temp.size();i++) {
-                nextNode = temp.get(i).getEnd_city();
-                endId = cityNameId(nextNode);
-                if(theShort+temp.get(i).getCost() < costRecord[endId]) {
-                    costRecord[endId] = theShort + temp.get(i).getCost();
-                    //TODO: 将wayRecord[startId]中的内容复制到wayRecord[endId],且将wayRecord[endId]的最后一个数修改成temp(i)对应的路线id
-                    int last = 0;
-                    for (int l=0;l<wayRecord[startId].length;l++) {
-                        if (wayRecord[startId][l] >=0) {
-                            wayRecord[endId][l] = wayRecord[startId][l];
-                        } else {
-                            last = l;
-                            break;
-                        }
-                    }
-                    wayRecord[endId][last] = temp.get(i).getId();
-                }
-                float min = 100000;
-                int id = 0;
-                for (int j=0; j<costRecord.length;j++) {
-                    if(!(allRoute.contains(cityIdName(j)))) {
-                        if(min > costRecord[j]) {
-                            min = costRecord[j];
-                            id = j;
-                        }
-                    }
-                }
-                 startNode = nextNode;
-            }
-        }
-        putIntoRoute(wayRecord[cityNameId(endCity)]);
-    }
+    public void initGraph() {
 
-    private void putIntoRoute(int[] list) {
-        for (int i=0;list[i]>=0;i++) {
-            route.add(myMapDB.loadWayById(list[i]));
+        for (int i=0;i<adjCity.length;i++)              //初始化邻接表
+            adjCity[i] = null;
+        leastCost = MAX;
+        leastTime = MAX;
+
+        ways = new ArrayList<Way>();
+        ways = myMapDB.loadAllWay();
+
+        for (int i=0;i<ways.size();i++) {
+            int id = ways.get(i).getId();
+            String startCity = ways.get(i).getStart_city();
+            String endCity = ways.get(i).getEnd_city();
+            String vehicle = ways.get(i).getVehicle();
+            String num = ways.get(i).getNumber();
+            int startTime = (int)ways.get(i).getStart_time();
+            int endTime = (int)ways.get(i).getEnd_time();
+            int allTime = ways.get(i).getAll_time();
+            int cost = (int)ways.get(i).getCost();
+            //添加七天的路线
+            for (int j=6;j>=0;j--) {
+                int day = (sDate + j) % 7;
+                if(j!=0 || startTime > sTime) {
+                    addWay(id, day, j * 24 + (startTime - sTime), cityNameId(startCity),  j * 24 + (startTime - sTime) + allTime, cityNameId(endCity), cost);
+                }
+            }
         }
     }
 
 
+
+
+    private boolean findTheTimeLeastRoute() {
+        Queue<Integer> queue = new LinkedList<Integer>();
+        boolean visited[] = new boolean[MAX_CITY*10000+(1<<MAX_CITY)];
+        int cost[][] = new int[MAX_CITY][1<<MAX_CITY];
+        int time[][] = new int[MAX_CITY][1<<MAX_CITY];
+        int referId[][] = new int[MAX_CITY][1<<MAX_CITY];
+        int referCity[][] = new int[MAX_CITY][1<<MAX_CITY];
+
+        for (int i=0;i<MAX_CITY;i++) {
+            for (int j=0;j<(1<<MAX_CITY);j++) {
+                cost[i][j] = -1;
+                time[i][j] = 10000000;
+                referId[i][j] = -1;
+                referCity[i][j] = -1;
+            }
+        }
+
+        cost[startState][1<<startState] = 0;
+        time[startState][1<<startState] = 0;
+
+        queue.add(startState*10000+(1<<startState));
+        visited[startState*10000+(1<<startState)] = true;
+        while(!queue.isEmpty()) {
+            int temp = queue.poll();
+            visited[temp] = false;
+            int x = temp/10000;
+            int state = temp%10000;
+            Way p = new Way();
+            p =adjCity[x];
+            for (;p!=null;p=p.getNext()) {
+                if( (((1<<p.getEnd_id())&state)^(1<<p.getEnd_id())) != 0 && //尚未访问过
+                        time[x][state] <= p.getStart_time() &&   //时间允许
+                        ( p.getEnd_time() < time[p.getEnd_id()][state+(1<<p.getEnd_id())] ||    //时间更低
+                                ( p.getEnd_time() == time[p.getEnd_id()][state+(1<<p.getEnd_id())] &&//时间一样，费用更少的情况
+                                        cost[x][state]+p.getCost() < cost[p.getEnd_id()][state+(1<<p.getEnd_id())]) )
+                        ){
+                    cost[p.getEnd_id()][state+(1<<p.getEnd_id())] = cost[x][state]+(int)p.getCost();                //更新费用
+                    time[p.getEnd_id()][state+(1<<p.getEnd_id())] =(int)p.getEnd_time();                            //更新时间
+                    referCity[p.getEnd_id()][state+(1<<p.getEnd_id())] = x;                                         //记录来自城市
+                    referId[p.getEnd_id()][state+(1<<p.getEnd_id())] = p.getId();                                   //记录来自城市id
+
+                    if(p.getEnd_id() == endState) continue;                                                        //到达目标城市，不需要更新
+
+                    if(visited[p.getEnd_id()*10000+(state+(1<<p.getEnd_id()))] == false) {
+                        //如果没有进入队列，则将这个状态放入队列
+                        queue.add( p.getEnd_id()*10000+(state+(1<<p.getEnd_id())) );
+                        visited[p.getEnd_id()*10000+(state+(1<<p.getEnd_id()))] = true;                                //进入队列标记为真
+                    }
+                }
+            }
+        }
+
+        //从记录中取出最优路线
+        int leastState = -1;
+        for(int state=passedState;  state<(1<<MAX_CITY); state++)
+            if( ((state&passedState)^passedState) == 0 &&                                                           //包含必须经过的城市
+                    time[endState][state] < leastTime ) {
+                leastState = state;
+                leastTime = time[endState][state];
+            }
+
+        if(leastState == -1) {
+            return false;
+        }
+        Stack<Integer> stack = new Stack<Integer>();
+        int tmpCity = endState;
+        int tmpState = leastState;
+        while(referCity[tmpCity][tmpState] != -1) {
+            stack.push(referId[tmpCity][tmpState]);
+            tmpState = tmpState - (1<<tmpCity);
+            tmpCity = referCity[tmpCity][tmpState+(1<<tmpCity)];
+        }
+
+        if(tmpState != (1<<startState)) {
+            return false;
+        }
+
+        while(!stack.isEmpty()) {
+            int id = stack.pop();
+            route.add(ways.get(id-1));
+        }
+        return true;
+    }
+
+
+
+    private boolean findTheCostLeastRoute() {
+        Queue<Integer> queue = new LinkedList<Integer>();
+        boolean visited[] = new boolean[MAX_CITY*10000+(1<<MAX_CITY)];
+        int cost[][] = new int[MAX_CITY][1<<MAX_CITY];
+        int time[][] = new int[MAX_CITY][1<<MAX_CITY];
+        int referId[][] = new int[MAX_CITY][1<<MAX_CITY];
+        int referCity[][] = new int[MAX_CITY][1<<MAX_CITY];
+
+        for (int i=0;i<MAX_CITY;i++) {
+            for (int j=0;j<(1<<MAX_CITY);j++) {
+                cost[i][j] = 100000000;
+                time[i][j] = -1;
+                referId[i][j] = -1;
+                referCity[i][j] = -1;
+            }
+        }
+
+        cost[startState][1<<startState] = 0;
+        time[startState][1<<startState] = 0;
+
+        queue.add(startState*10000+(1<<startState));
+        visited[startState*10000+(1<<startState)] = true;
+        while(!queue.isEmpty()) {
+            int temp = queue.poll();
+            visited[temp] = false;
+            int x = temp/10000;
+            int state = temp%10000;
+            Way p = new Way();
+            p =adjCity[x];
+            for (;p!=null;p=p.getNext()) {
+                if( (((1<<p.getEnd_id())&state)^(1<<p.getEnd_id())) != 0 && //无访问过
+                        time[x][state] <= p.getStart_time() &&   //时间允许
+                        ( cost[x][state]+p.getCost() < cost[p.getEnd_id()][state+(1<<p.getEnd_id())] ||          //费用更低
+                                ( cost[x][state]+p.getCost() == cost[p.getEnd_id()][state+(1<<p.getEnd_id())] && //费用一样的情况下，更早到达
+                                        p.getEnd_time() < time[p.getEnd_id()][state+(1<<p.getEnd_id())]) )
+                        ){
+                    cost[p.getEnd_id()][state+(1<<p.getEnd_id())] = cost[x][state]+(int)p.getCost();            //更新费用
+                    time[p.getEnd_id()][state+(1<<p.getEnd_id())] =(int)p.getEnd_time();                         //更新时间
+                    referCity[p.getEnd_id()][state+(1<<p.getEnd_id())] = x;                                     //记录来自城市
+                    referId[p.getEnd_id()][state+(1<<p.getEnd_id())] = p.getId();                               //记录来自城市id
+
+                    if(p.getEnd_id() == endState) continue;     //到达目标城市，不用这个状态更新其他城市
+
+                    if(visited[p.getEnd_id()*10000+(state+(1<<p.getEnd_id()))] == false) {
+                        //如果没有进入队列，则将这个状态放入队列
+                        queue.add( p.getEnd_id()*10000+(state+(1<<p.getEnd_id())) );
+                        visited[p.getEnd_id()*10000+(state+(1<<p.getEnd_id()))] = true;                         //进入队列标记为真
+                    }
+                }
+            }
+        }
+
+        //从记录中取出最优路线
+        int leastState = -1;
+        for(int state=passedState;  state<(1<<MAX_CITY); state++)
+            if( ((state&passedState)^passedState) == 0 &&                                                   //包含必须经过的城市
+                    cost[endState][state] < leastCost ) {
+                leastState = state;
+                leastCost = cost[endState][state];
+            }
+
+        if(leastState == -1) {
+            return false;  //没有找到路线
+        }
+
+        Stack<Integer> stack = new Stack<Integer>();
+        int tmpCity = endState;
+        int tmpState = leastState;
+        while(referCity[tmpCity][tmpState] != -1) {
+            stack.push(referId[tmpCity][tmpState]);
+            tmpState = tmpState - (1<<tmpCity);
+            tmpCity = referCity[tmpCity][tmpState+(1<<tmpCity)];
+        }
+
+        if(tmpState != (1<<startState)) {
+            return false;   //没有找到路线
+        }
+
+        while(!stack.isEmpty()) {
+            int id = stack.pop();
+            route.add(ways.get(id-1));
+        }
+        return true;
+    }
+
+
+
+    public boolean findTheSuitRoute() {
+        Queue<Integer> queue = new LinkedList<Integer>();
+        Map<Integer,Boolean> visited = new HashMap<Integer,Boolean>();
+
+        Map<Integer, Map<Integer, Map<Integer,Integer>>> cost1 = new HashMap<Integer, Map<Integer, Map<Integer,Integer>>>();
+        Map<Integer, Map<Integer, Map<Integer,Integer>>> time1 = new HashMap<Integer, Map<Integer, Map<Integer,Integer>>>();
+        Map<Integer, Map<Integer, Map<Integer,Integer>>> referId1 = new HashMap<Integer, Map<Integer, Map<Integer,Integer>>>();
+        Map<Integer, Map<Integer, Map<Integer,Integer>>> referCity1 = new HashMap<Integer, Map<Integer, Map<Integer,Integer>>>();
+        Map<Integer, Map<Integer, Map<Integer,Integer>>> referTime1 = new HashMap<Integer, Map<Integer, Map<Integer,Integer>>>();
+
+        Map<Integer, Map<Integer,Integer>> cost2 = new HashMap<Integer, Map<Integer,Integer>>();
+        Map<Integer, Map<Integer,Integer>> time2 = new HashMap<Integer, Map<Integer,Integer>>();
+        Map<Integer, Map<Integer,Integer>> referId2 = new HashMap<Integer, Map<Integer,Integer>>();
+        Map<Integer, Map<Integer,Integer>> referCity2 = new HashMap<Integer, Map<Integer,Integer>>();
+        Map<Integer, Map<Integer,Integer>> referTime2 = new HashMap<Integer, Map<Integer,Integer>>();
+
+        Map<Integer,Integer> cost3 = new HashMap<Integer,Integer>();
+        Map<Integer,Integer> time3 = new HashMap<Integer,Integer>();
+        Map<Integer,Integer> referId3 = new HashMap<Integer,Integer>();
+        Map<Integer,Integer> referCity3 = new HashMap<Integer,Integer>();
+        Map<Integer,Integer> referTime3 = new HashMap<Integer,Integer>();
+
+        cost3.put(0,0);
+        cost2.put(1<<startState,cost3);
+        cost1.put(startState,cost2);
+
+        referCity3.put(0,-1);
+        referCity2.put(1<<startState,referCity3);
+        referCity1.put(startState,referCity2);
+
+
+        queue.add(startState * 10000 * 1000 + (1 << startState) * 1000 + 0);                       //初始状态入队列
+        visited.put(startState*10000*1000+(1<<startState)*1000+0,true);
+        while(!queue.isEmpty()) {
+            int temp = queue.poll();
+            visited.put(temp,false);
+            int x = temp/10000000;
+            int state = temp%10000000/1000;
+            int cTime = temp%1000;
+            Way p = new Way();
+            p =adjCity[x];
+            for (;p!=null;p=p.getNext()) {
+                boolean flag = false;
+                if ((((1<<p.getEnd_id())&state)^(1<<p.getEnd_id())) != 0
+                ) {
+                    flag = true;
+                    if (cost1.get(x)==null||cost1.get(x).get(state)==null||cost1.get(x).get(state).get(cTime)==null) {
+                        cost3.put(cTime,0);cost2.put(state,cost3);cost1.put(x,cost2);
+                    }
+
+                    if (cost1.get(p.getEnd_id())==null||cost1.get(p.getEnd_id()).get(state+(1<<p.getEnd_id()))==null||
+                            cost1.get(p.getEnd_id()).get(state+(1<<p.getEnd_id())).get((int)p.getEnd_time())==null) {
+                        cost3.put((int)p.getEnd_time(),0);cost2.put(state+1<<p.getEnd_id(),cost3);cost1.put(p.getEnd_id(),cost2);
+                    }
+                }
+
+                if( flag && ((cost1.get(p.getEnd_id())==null||cost1.get(p.getEnd_id()).get(state + (1 << p.getEnd_id()))==null||
+                                         cost1.get(p.getEnd_id()).get(state + (1 << p.getEnd_id())).get((int)p.getEnd_time())==null) ||
+                                //这个状态以前没有拜访过
+                                cost1.get(x).get(state).get(cTime) + p.getCost() <cost1.get(p.getEnd_id()).get(state+(1<<p.getEnd_id())).get((int)p.getEnd_time()) )
+                    //费用更少
+                        ){
+                    cost3.put((int)p.getEnd_time(),cost1.get(x).get(state).get(cTime)+(int)p.getCost());
+                    cost2.put(state+(1<<p.getEnd_id()),cost3);
+                    cost1.put(p.getEnd_id(),cost2);
+                    //更新费用
+                    referCity3.put((int) p.getEnd_time(), x);
+                    referCity2.put(state+(1<<p.getEnd_id()),referCity3);
+                    referCity1.put(p.getEnd_id(),referCity2);
+                    referId3.put((int)p.getEnd_time(),p.getId());
+                    referId2.put(state+(1<<p.getEnd_id()),referId3);
+                    referId1.put(p.getEnd_id(),referId2);
+                    referTime3.put((int)p.getEnd_time(),cTime);
+                    referTime2.put(state+(1<<p.getEnd_id()),referTime3);
+                    referTime1.put(p.getEnd_id(),referTime2);
+
+                    if(p.getEnd_id() == endState) continue;     //到达目标城市，不用这个状态更新其他城市
+                    if(visited.get(p.getEnd_id()*10000*1000+(state+(1<<p.getEnd_id()))*1000+(int)p.getEnd_time()) == null ||
+                            visited.get(p.getEnd_id()*10000*1000+(state+(1<<p.getEnd_id()))*1000+(int)p.getEnd_time()) == false) {
+                        //如果没有进入队列，则将这个状态放入队列
+                        queue.add( p.getEnd_id()*10000*1000+(state+(1<<p.getEnd_id()))+(int)p.getEnd_time() );
+                        visited.put(p.getEnd_id()*10000*1000+(state+(1<<p.getEnd_id()))+(int)p.getEnd_time(),true); //进入队列标记为真
+                    }
+                }
+            }
+        }
+
+        //从记录中取出最优路线
+        int leastState = -1, tag = -1;
+        for(int state=passedState;  state<(1<<MAX_CITY); state++)    //先找出最少时间
+            if( ((state&passedState)^passedState) == 0) {
+                for (int mt=0; mt <= limited; mt++) {
+                     if ((cost1.get(endState)!=null&&cost1.get(endState).get(state)!=null&&
+                             cost1.get(endState).get(state).get(mt)!=null && cost1.get(endState).get(state).get(mt)!=0) &&
+                             cost1.get(endState).get(state).get(mt)<leastCost) {
+                         leastState = state; tag = mt; leastCost = cost1.get(endState).get(state).get(mt);
+
+                     }
+                }
+            }
+
+        if(leastState == -1) {
+            return false;  //没有找到路线
+        }
+        Stack<Integer> stack = new Stack<Integer>();
+        int tmpCity = endState;
+        int tmpState = leastState;
+        int tmpTime = tag;
+        while(referCity1.get(tmpCity)!=null&&referCity1.get(tmpCity).get(tmpState)!=null&&referCity1.get(tmpCity).get(tmpState).get(tmpTime)!=null&&referCity1.get(tmpCity).get(tmpState).get(tmpTime)!=-1)
+        /*referCity1.get(tmpCity).get(tmpState).get(tmpTime) != -1*/ {
+            stack.push(referId1.get(tmpCity).get(tmpState).get(tmpTime));
+            int temp = tmpTime;
+            tmpTime = referTime1.get(tmpCity).get(tmpState).get(temp);
+            tmpState = tmpState - (1<<tmpCity);
+            tmpCity = referCity1.get(tmpCity).get(tmpState+(1<<tmpCity)).get(temp);
+        }
+
+        if(tmpState != (1<<startState)) {
+            return false;   //没有找到路线
+        }
+
+        while(!stack.isEmpty()) {
+            int id = stack.pop();
+            route.add(ways.get(id-1));
+        }
+        return true;
+    }
+
+
+
+    /*
+    *  @param id 城市id
+    *  @Description 通过城市id获取城市
+    */
     private String cityIdName(int id) {
         return allCity.get(id).getName();
     }
 
+    /*
+     *  @param name 城市名
+     *  @Description 通过城市名获取城市id
+     */
     private int cityNameId(String name) {
         int i;
         for (i=0;i<allCity.size();i++) {
@@ -200,94 +476,4 @@ public class Utility {
         }
         return i;
     }
-
-
-
-    private void findTheSuitableRoute() {
-        List<String> allRoute = new ArrayList<String>();
-        List<Way> temp = new ArrayList<Way>();
-        int [][] wayRecord = new int[20][20];
-        float [] costRecord = new float[20];
-        float [] timeRecord = new float[20];
-        float theShort = 0;
-        float timeCost = 0;
-        String startNode = startCity;
-        String nextNode = " ";
-        int startId, endId;
-        boolean money = false, time = false;
-        //TODO:初始化costRecord和wayRecord数组全为-1
-        for (int k=0;k<costRecord.length;k++) {
-            if (k!=cityNameId(startCity)) {
-                costRecord[k] = 1000000;
-                timeRecord[k] = 1000000;
-            } else costRecord[k] = 0;
-        }
-        for(int r=0;r<wayRecord.length;r++)
-            for (int c=0;c<wayRecord[0].length;c++) {
-                wayRecord[r][c] = -1;
-            }
-        while(!(allRoute.contains(startCity)&&allRoute.contains(endCity))) {
-            temp = myMapDB.loadWayByStartCity(startNode);
-            startId = cityNameId(startNode);
-            theShort = costRecord[startId];
-            for (int i=0; i<temp.size();i++) {
-                nextNode = temp.get(i).getEnd_city();
-                endId = cityNameId(nextNode);
-                if(theShort+temp.get(i).getCost() < costRecord[endId]) {
-                    money = true;
-                }
-
-                float currentTime = theShort;
-                while(currentTime >= 24){
-                    currentTime -= 24;
-                }
-                float compare;
-                if (temp.get(i).getEnd_time()-currentTime>=0) {
-                    compare = temp.get(i).getEnd_time() - currentTime;
-                } else compare = (temp.get(i).getEnd_time()-currentTime)%24;
-
-                if (compare>=temp.get(i).getAll_time()) {
-                    float add = 0;
-                    if (temp.get(i).getEnd_time() > currentTime)
-                        add = temp.get(i).getEnd_time() - currentTime;
-                    else add = (temp.get(i).getEnd_time() - currentTime) % 24;
-
-                    if (add + theShort < costRecord[endId]) {
-                        time = true;
-                    }
-                }
-
-                if (money && time) {
-                    //TODO: 将wayRecord[startId]中的内容复制到wayRecord[endId],且将wayRecord[endId]的最后一个数修改成temp(i)对应的路线id
-                    int last = 0;
-                    for (int l=0;l<wayRecord[startId].length;l++) {
-                        if (wayRecord[startId][l] >=0) {
-                            wayRecord[endId][l] = wayRecord[startId][l];
-                        } else {
-                            last = l;
-                            break;
-                        }
-                    }
-                    wayRecord[endId][last] = temp.get(i).getId();
-                }
-
-                float min = 100000;
-                int id = 0;
-                for (int j=0; j<costRecord.length;j++) {
-                    if(!(allRoute.contains(cityIdName(j)))) {
-                        if(min > costRecord[j]) {
-                            min = costRecord[j];
-                            id = j;
-                        }
-                    }
-                }
-                startNode = nextNode;
-            }
-        }
-        putIntoRoute(wayRecord[cityNameId(endCity)]);
-
-    }
-
-
 }
-

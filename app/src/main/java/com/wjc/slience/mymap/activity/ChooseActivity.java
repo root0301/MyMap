@@ -17,7 +17,10 @@ import android.widget.Toast;
 
 import com.wjc.slience.mymap.R;
 import com.wjc.slience.mymap.common.ActivityCollector;
+import com.wjc.slience.mymap.common.LogUtil;
 import com.wjc.slience.mymap.common.Utility;
+import com.wjc.slience.mymap.db.MyMapDB;
+import com.wjc.slience.mymap.model.City;
 import com.wjc.slience.mymap.model.Way;
 
 import java.util.ArrayList;
@@ -93,8 +96,10 @@ public class ChooseActivity extends AppCompatActivity implements View.OnClickLis
         });
     }
 
+
+
     /**
-     *  设置起点终点的TextView
+     *   设置起点终点的TextView
      */
     public void setCityText() {
         Intent intent = getIntent();
@@ -151,7 +156,7 @@ public class ChooseActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     /**
-     * 事件的触发
+     *  事件的触发
      */
     @Override
     public void onClick(View v) {
@@ -171,22 +176,28 @@ public class ChooseActivity extends AppCompatActivity implements View.OnClickLis
                 startActivity(intent);
                 break;
             case R.id.searchButton:
-                if(STRATEGY == 3) {
-                    limited = Integer.valueOf(time.getText().toString().trim());
-                }
-                //TODO: to add a progressbar here
-                if (limited>=0 && limited<10000000) {
-                    //ways = utility.findTheRoute(startCity.getText().toString().trim(), endCity.getText().toString().trim(),passedCityNames,limited ,STRATEGY);
-                    //wayIntent.putExtra("ways",(ArrayList)ways);
-                    wayIntent.putExtra("ways", (ArrayList) testWay());
-                    if (currentTime!=-1) {
-                        wayIntent.putExtra("time",currentTime);
+                    if(STRATEGY == 3) {
+                        limited = Integer.valueOf(time.getText().toString().trim());
+                        if (limited==0) {
+                            Toast.makeText(ChooseActivity.this,"请输入限时",Toast.LENGTH_SHORT).show();
+                            break;
+                        }
                     }
-                    startActivity(wayIntent);
-                    finish();
-                } else {
-                    Toast.makeText(ChooseActivity.this,"Please input the right time limited",Toast.LENGTH_SHORT).show();
-                }
+                    if (limited>=0 && limited<10000000) {
+                        if (currentTime!=-1) {
+                            wayIntent.putExtra("time",currentTime);
+                        }
+                        ways = utility.findTheRoute(startCity.getText().toString().trim(), endCity.getText().toString().trim(),passedCityNames,limited ,STRATEGY,currentTime);
+                        wayIntent.putExtra("ways",(ArrayList)ways);
+                        if (currentTime!=-1) {
+                            wayIntent.putExtra("time",currentTime);
+                        }
+                        startActivity(wayIntent);
+                        finish();
+                    } else {
+                        Toast.makeText(ChooseActivity.this,"请输入正确的限时",Toast.LENGTH_SHORT).show();
+                    }
+
                 break;
             case R.id.history_show :
                 Intent history = new Intent(ChooseActivity.this,MsgActivity.class);
@@ -195,46 +206,6 @@ public class ChooseActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-    private List<Way> testWay() {
-        List<Way> list = new ArrayList<Way>();
-        for (int i=0;i<3;i++) {
-            Way way = new Way();
-            way.setId(i);
-            switch (i) {
-                case 0:
-                    way.setStart_city("海口市");
-                    way.setEnd_city("广州市");
-                    way.setStart_time(20);
-                    way.setEnd_time(22);
-                    way.setAll_time(2);
-                    way.setCost(300);
-                    way.setVehicle("火车");
-                    list.add(way);
-                    break;
-                case 1:
-                    way.setStart_city("广州市");
-                    way.setEnd_city("上海市");
-                    way.setStart_time(22);
-                    way.setEnd_time(1);
-                    way.setAll_time(3);
-                    way.setCost(500);
-                    way.setVehicle("汽车");
-                    list.add(way);
-                    break;
-                case 2:
-                    way.setStart_city("上海市");
-                    way.setEnd_city("北京市");
-                    way.setStart_time(2);
-                    way.setEnd_time(3);
-                    way.setAll_time(1);
-                    way.setCost(1200);
-                    way.setVehicle("飞机");
-                    list.add(way);
-                    break;
-            }
-        }
-        return list;
-    }
 
     @Override
     protected void onDestroy() {
@@ -242,7 +213,7 @@ public class ChooseActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     /**
-     * 退出操作
+     *  退出操作
      */
       @Override
   public boolean onKeyDown(int keyCode, KeyEvent event) {
