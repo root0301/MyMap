@@ -10,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,6 +26,7 @@ import com.wjc.slience.mymap.model.Way;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 首页，路线选择
@@ -45,13 +47,16 @@ public class ChooseActivity extends AppCompatActivity implements View.OnClickLis
     private static String endText = null;
     private static int mSize = 0;
     private int nameType;
-    private int currentTime = -1;
-    public static int STRATEGY = 0;
+    private static int currentTime = -1;
+    public static int STRATEGY = 1;
     private int limited = 0;
     private static Boolean isQuit = false;
     private long mExitTime = 0;
     private List<Way> ways;
     private List<String> passedCityNames;
+    private RadioButton R1;
+    private RadioButton R2;
+    private RadioButton R3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +83,7 @@ public class ChooseActivity extends AppCompatActivity implements View.OnClickLis
         passedCity.setOnClickListener(this);
         history.setOnClickListener(this);
         searchButton.setOnClickListener(this);
+        setCheck();
         rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -117,21 +123,18 @@ public class ChooseActivity extends AppCompatActivity implements View.OnClickLis
         }
         switch (nameType) {
             case 1:
-                System.out.println("来自开始");
                 startCity.setText(startText);
                 if(endText != null) {
                     endCity.setText(endText);
                 }
                 break;
             case 2:
-                System.out.println("来自终点");
                 endCity.setText(endText);
                 if (startText != null) {
                     startCity.setText(startText);
                 }
                 break;
             case 3:
-                System.out.println("来自第三个");
                 if(mSize != 0) {
                     passedCity.setText("已选择"+mSize+"个城市");
                 }
@@ -153,6 +156,7 @@ public class ChooseActivity extends AppCompatActivity implements View.OnClickLis
     protected void onResume() {
         super.onResume();
         setCityText();
+        setCheck();
     }
 
     /**
@@ -202,6 +206,23 @@ public class ChooseActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.history_show :
                 Intent history = new Intent(ChooseActivity.this,MsgActivity.class);
                 startActivity(history);
+                break;
+        }
+    }
+
+    public void setCheck() {
+        R1 = (RadioButton) findViewById(R.id.choose_first);
+        R2 = (RadioButton) findViewById(R.id.choose_second);
+        R3 = (RadioButton) findViewById(R.id.choose_third);
+        switch (STRATEGY) {
+            case 1:
+                R1.setChecked(true);
+                break;
+            case 2:
+                R2.setChecked(true);
+                break;
+            case 3:
+                R3.setChecked(true);
                 break;
         }
     }

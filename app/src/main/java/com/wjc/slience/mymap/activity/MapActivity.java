@@ -124,6 +124,7 @@ public class MapActivity extends AppCompatActivity {
                     intent.putExtra("type",4);
                     intent.putExtra("time",CURRENT_TIME);
                     intent.putExtra("name", ways.get(wayId).getStart_city());
+                    System.out.println("传出去的参数是"+CURRENT_TIME);
                     startActivity(intent);
                     finish();
                 } else {
