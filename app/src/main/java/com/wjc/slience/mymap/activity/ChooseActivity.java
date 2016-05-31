@@ -1,6 +1,8 @@
 package com.wjc.slience.mymap.activity;
 
 import android.app.ActivityManager;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -27,6 +29,8 @@ import com.wjc.slience.mymap.model.Way;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 首页，路线选择
@@ -117,6 +121,9 @@ public class ChooseActivity extends AppCompatActivity implements View.OnClickLis
         } else if (nameType == 3) {
             passedCityNames = intent.getStringArrayListExtra("cities");
             mSize = passedCityNames.size();
+            for (int i=0;i<mSize;i++) {
+                System.out.println("---"+passedCityNames.get(i));
+            }
         } else if (nameType == 4) {
             startText = intent.getStringExtra("name");
             currentTime = intent.getIntExtra("time",-1);
@@ -181,26 +188,42 @@ public class ChooseActivity extends AppCompatActivity implements View.OnClickLis
                 break;
             case R.id.searchButton:
                     if(STRATEGY == 3) {
-                        limited = Integer.valueOf(time.getText().toString().trim());
-                        if (limited==0) {
-                            Toast.makeText(ChooseActivity.this,"请输入限时",Toast.LENGTH_SHORT).show();
+                        String input = time.getText().toString();
+                        if (input.equals("")) {
+                            Toast.makeText(ChooseActivity.this,"请正确输入限时好么",Toast.LENGTH_SHORT).show();
                             break;
                         }
+                        Pattern p = Pattern.compile("[0-9]*");
+                        Matcher m = p.matcher(input);
+                        if (!m.matches()) {
+                            Toast.makeText(ChooseActivity.this,"请正确输入限时好么",Toast.LENGTH_SHORT).show();
+                            break;
+                        }
+                        limited = Integer.valueOf(time.getText().toString().trim());
                     }
-                    if (limited>=0 && limited<10000000) {
+
                         if (currentTime!=-1) {
                             wayIntent.putExtra("time",currentTime);
                         }
+                        if (startCity.getText().toString().trim().equals("选择出发城市")||endCity.getText().toString().trim().equals("选择终点城市")) {
+                            Toast.makeText(ChooseActivity.this,"请选择城市好么",Toast.LENGTH_SHORT).show();
+                            break;
+                        }
                         ways = utility.findTheRoute(startCity.getText().toString().trim(), endCity.getText().toString().trim(),passedCityNames,limited ,STRATEGY,currentTime);
+                        if (ways.size()==0) {
+                            Toast.makeText(ChooseActivity.this,"没有符合条件的路线",Toast.LENGTH_SHORT).show();
+                            break;
+                        }
                         wayIntent.putExtra("ways",(ArrayList)ways);
                         if (currentTime!=-1) {
                             wayIntent.putExtra("time",currentTime);
                         }
+                        int[] received = new int[5];
+                        received = utility.calculateTimeMoney(ways,currentTime);
+                        wayIntent.putExtra("allMoney",received[1]);
+                        wayIntent.putExtra("allTime",received[2]);
                         startActivity(wayIntent);
                         finish();
-                    } else {
-                        Toast.makeText(ChooseActivity.this,"请输入正确的限时",Toast.LENGTH_SHORT).show();
-                    }
 
                 break;
             case R.id.history_show :
@@ -209,6 +232,7 @@ public class ChooseActivity extends AppCompatActivity implements View.OnClickLis
                 break;
         }
     }
+
 
     public void setCheck() {
         R1 = (RadioButton) findViewById(R.id.choose_first);

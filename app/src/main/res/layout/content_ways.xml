@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.wjc.slience.mymap.WaysActivity"
-    tools:showIn="@layout/aitivity_ways">
+    tools:showIn="@layout/aitivity_ways"
+    android:background="@drawable/backc">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/way_list"

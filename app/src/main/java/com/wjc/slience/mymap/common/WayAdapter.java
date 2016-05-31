@@ -43,7 +43,8 @@ public class WayAdapter extends RecyclerView.Adapter<WayAdapter.wayHolder> {
         holder.endTime.setText(Integer.toString((int) list.get(position).getEnd_time())+"时");
         holder.money.setText(Float.toString(list.get(position).getCost()));
         holder.time.setText(Integer.toString(list.get(position).getAll_time())+"小时");
-
+        holder.vehicle.setText(list.get(position).getVehicle());
+/*
         if (mOnItemClickListener == null) {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -51,7 +52,7 @@ public class WayAdapter extends RecyclerView.Adapter<WayAdapter.wayHolder> {
                     mOnItemClickListener.onItemClick(holder.itemView,position);
                 }
             });
-        }
+        }*/
 
     }
 
@@ -68,6 +69,7 @@ public class WayAdapter extends RecyclerView.Adapter<WayAdapter.wayHolder> {
         TextView endTime;
         TextView time;
         TextView money;
+        TextView vehicle;
 
         public wayHolder(View view) {
             super(view);
@@ -77,16 +79,17 @@ public class WayAdapter extends RecyclerView.Adapter<WayAdapter.wayHolder> {
             endTime = (TextView) view.findViewById(R.id.end_time_txt);
             time = (TextView) view.findViewById(R.id.time);
             money = (TextView) view.findViewById(R.id.money);
+            vehicle = (TextView)view.findViewById(R.id.vehicle);
         }
     }
 
-    public interface onItemClickListener {
+/*    public interface onItemClickListener {
         void onItemClick(View view, int position);
     }
     private onItemClickListener mOnItemClickListener;
 
     public void setOnClickListener(onItemClickListener mOnItemClickListener) {
         this.mOnItemClickListener = mOnItemClickListener;
-    }
+    }*/
 
 }

@@ -1,5 +1,6 @@
 package com.wjc.slience.mymap.activity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -35,14 +36,17 @@ import java.util.List;
 public class WaysActivity extends AppCompatActivity {
 
 
-    RecyclerView recyclerView;
-    List<Way> list;
-    List<City> cities;
-    WayAdapter adapter;
-    FloatingActionButton search;
-    GeocodeSearch geocodeSearch;
+    private RecyclerView recyclerView;
+    private List<Way> list;
+    private List<City> cities;
+    private WayAdapter adapter;
+    private FloatingActionButton search;
+    private GeocodeSearch geocodeSearch;
+    private ProgressDialog progressDialog;
     private static int COUNT = 0;
     private int currentTime = -1;
+    private int allMoney = 0;
+    private int allTime = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,9 +59,11 @@ public class WaysActivity extends AppCompatActivity {
         Intent intent = getIntent();
         list =  (ArrayList<Way>) getIntent().getSerializableExtra("ways");
         currentTime = intent.getIntExtra("time",-1);
+        allMoney = intent.getIntExtra("allMoney",0);
+        allTime = intent.getIntExtra("allTime",0);
         setCities();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle("路线预览");
+        toolbar.setTitle("总时间:"+allTime+"小时 总费用:"+allMoney+"元");
         setSupportActionBar(toolbar);
         final Intent mapIntent = new Intent(WaysActivity.this, MapActivity.class);
         mapIntent.putExtra("ways", (ArrayList) list);
@@ -83,6 +89,7 @@ public class WaysActivity extends AppCompatActivity {
                 }
                 //解析完成
                 if (COUNT == cities.size()) {
+                    closeProgressDialog();
                     mapIntent.putExtra("city", (ArrayList) cities);
                     Toast.makeText(WaysActivity.this, "解析完成", Toast.LENGTH_SHORT).show();
                     COUNT = 0;
@@ -107,6 +114,7 @@ public class WaysActivity extends AppCompatActivity {
      * 生产一个带有所有途径城市的list容器
      */
     private void setCities() {
+        showProgressDialog();
         for (int i=0;i<list.size();i++) {
             City city = new City();
             city.setName(list.get(i).getStart_city());
@@ -155,6 +163,21 @@ public class WaysActivity extends AppCompatActivity {
             LogUtil.getInstance().writeIntoFile(info);
         }
     }
+
+    public void showProgressDialog() {
+        if (progressDialog==null) {
+            progressDialog = new ProgressDialog(this);
+            progressDialog.setMessage("正在联网解析地址");
+            progressDialog.setCanceledOnTouchOutside(false);
+        }
+        progressDialog.show();
+    }
+    public void closeProgressDialog() {
+        if (progressDialog!=null) {
+            progressDialog.dismiss();
+        }
+    }
+
 
     @Override
     protected void onResume() {

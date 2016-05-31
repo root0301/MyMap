@@ -46,6 +46,8 @@
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".activity.MsgActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".activity.EndActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>

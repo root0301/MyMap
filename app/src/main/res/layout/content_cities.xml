@@ -7,7 +7,7 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.wjc.slience.mymap.CityActivity"
     tools:showIn="@layout/activity_cities"
-    android:background="@color/grey_200">
+    android:background="@drawable/backg">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/city_list"

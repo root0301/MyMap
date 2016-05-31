@@ -100,7 +100,7 @@ public class MapActivity extends AppCompatActivity {
         stop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialog();
+                messageDialog();
             }
         });
 
@@ -143,6 +143,29 @@ public class MapActivity extends AppCompatActivity {
         builder.show();
     }
 
+
+    private void messageDialog() {
+        int size = ways.size();
+        CharSequence[] listString = new String[size];
+        for (int i=0;i<ways.size();i++) {
+            int x = i+1;
+            listString[i] = new String(x+"、"+ways.get(i).getStart_city()+"("+ways.get(i).getStart_time()+"时出发)--乘坐编号为"
+                    +ways.get(i).getNumber()+"的"+ways.get(i).getVehicle()+"--"
+            +ways.get(i).getEnd_city()+"("+ways.get(i).getEnd_time()+"时到达)");
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("路线预览");
+        builder.setItems(listString, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+
+       builder.show();
+    }
+
+
+
     /**
      * 计时器，每过1秒执行一次，执行十次后，CURRENT_TIME推进到下一小时
      */
@@ -159,7 +182,7 @@ public class MapActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            timeMessage.setText("当前时间:" + CURRENT_TIME );
+                            timeMessage.setText("当前时间:" + CURRENT_TIME +":00");
                         }
                     });
                     //到达0点，天数加一
@@ -179,7 +202,7 @@ public class MapActivity extends AppCompatActivity {
         //到达终点，旅行结束，返回首页
         if (wayId == ways.size()-1 && CURRENT_TIME == ways.get(wayId).getEnd_time()) {
             timer.cancel();
-            Intent intent = new Intent(MapActivity.this,ChooseActivity.class);
+            Intent intent = new Intent(MapActivity.this,EndActivity.class);
             startActivity(intent);
             finish();
         }

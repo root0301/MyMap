@@ -6,13 +6,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.wjc.slience.mymap.R;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -24,6 +28,7 @@ public class CityAdapter extends RecyclerView.Adapter<CityAdapter.cityHolder> {
     private final LayoutInflater layoutInflater;
     private List<String> mName;
     private int mType;
+    private List<Integer> checkPositionList;
 
 
     public CityAdapter(Context context, List<String> name,int type) {
@@ -31,6 +36,7 @@ public class CityAdapter extends RecyclerView.Adapter<CityAdapter.cityHolder> {
         layoutInflater = LayoutInflater.from(context);
         mName = name;
         mType = type;
+        checkPositionList = new ArrayList<Integer>();
     }
 
 
@@ -44,8 +50,14 @@ public class CityAdapter extends RecyclerView.Adapter<CityAdapter.cityHolder> {
      */
     @Override
     public void onBindViewHolder(final cityHolder holder, final int position) {
-
+        holder.setIsRecyclable(false);
+        holder.checkBox.setTag(new Integer(position));
         holder.mName.setText(mName.get(position));
+        if (checkPositionList != null) {
+            ((cityHolder) holder).checkBox.setChecked((checkPositionList.contains(new Integer(position)) ? true : false));
+        } else {
+            ((cityHolder) holder).checkBox.setChecked(false);
+        }
         if(mType == 2 || mType == 1) {
             holder.checkBox.setVisibility(View.GONE);
         }
@@ -56,10 +68,26 @@ public class CityAdapter extends RecyclerView.Adapter<CityAdapter.cityHolder> {
                 @Override
                 public void onClick(View v) {
                     mOnItemClickListener.onItemClick(holder.itemView,position);
-                    if(holder.checkBox.isChecked()) {
+
+                   if(holder.checkBox.isChecked()) {
                         holder.checkBox.setChecked(false);
                     } else {
                         holder.checkBox.setChecked(true);
+                    }
+                }
+            });
+            holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                    if (isChecked) {
+                        if(!checkPositionList.contains(holder.checkBox.getTag()));
+
+                            checkPositionList.add(new Integer(position));
+                    } else {
+                        if (checkPositionList.contains(holder.checkBox.getTag())) {
+                            checkPositionList.remove(new Integer(position));
+                        }
                     }
                 }
             });

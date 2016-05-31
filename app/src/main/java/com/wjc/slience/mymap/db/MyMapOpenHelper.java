@@ -101,8 +101,6 @@ public class MyMapOpenHelper extends SQLiteOpenHelper {
         db.execSQL("insert into Route(start_city,end_city,start_time,end_time,all_time,cost,vehicle,number) values(?,?,?,?,?,?,?,?)",new String[] {"北京市","南京市","08","10","2小时","370","飞机","MU2802"});
         db.execSQL("insert into Route(start_city,end_city,start_time,end_time,all_time,cost,vehicle,number) values(?,?,?,?,?,?,?,?)",new String[] {"北京市","昆明市","12","22","34小时","317","火车","Z161"});
         db.execSQL("insert into Route(start_city,end_city,start_time,end_time,all_time,cost,vehicle,number) values(?,?,?,?,?,?,?,?)",new String[] {"北京市","昆明市","06","10","4小时","620","飞机","8L9988"});
-        db.execSQL("insert into Route(start_city,end_city,start_time,end_time,all_time,cost,vehicle,number) values(?,?,?,?,?,?,?,?)",new String[] {"北京市","大理市","06","10","4小时","2602","飞机","ZH1419"});
-        db.execSQL("insert into Route(start_city,end_city,start_time,end_time,all_time,cost,vehicle,number) values(?,?,?,?,?,?,?,?)",new String[] {"北京市","大理市","08","17","9小时","1925","飞机","HU7211"});
         db.execSQL("insert into Route(start_city,end_city,start_time,end_time,all_time,cost,vehicle,number) values(?,?,?,?,?,?,?,?)",new String[] {"北京市","杭州市","13","09","20小时","300","汽车","3819"});
         db.execSQL("insert into Route(start_city,end_city,start_time,end_time,all_time,cost,vehicle,number) values(?,?,?,?,?,?,?,?)",new String[] {"北京市","杭州市","23","20","21小时","189.5","火车","K101"});
         db.execSQL("insert into Route(start_city,end_city,start_time,end_time,all_time,cost,vehicle,number) values(?,?,?,?,?,?,?,?)",new String[] {"北京市","杭州市","14","16","2小时","365","飞机","MU7324"});
@@ -188,18 +186,38 @@ public class MyMapOpenHelper extends SQLiteOpenHelper {
         db.execSQL("insert into Route(start_city,end_city,start_time,end_time,all_time,cost,vehicle,number) values(?,?,?,?,?,?,?,?)",new String[] {"南京市","杭州市","14","20","6小时","62.5","火车","K101"});
         db.execSQL("insert into Route(start_city,end_city,start_time,end_time,all_time,cost,vehicle,number) values(?,?,?,?,?,?,?,?)",new String[] {"昆明市","北京市","11","15","4小时","572","飞机","KN5208"});
         db.execSQL("insert into Route(start_city,end_city,start_time,end_time,all_time,cost,vehicle,number) values(?,?,?,?,?,?,?,?)",new String[] {"昆明市","北京市","21","06","33小时","317","火车","Z162"});
-        db.execSQL("insert into Route(start_city,end_city,start_time,end_time,all_time,cost,vehicle,number) values(?,?,?,?,?,?,?,?)",new String[] {"昆明市","大理市","09","15","6小时","64","火车","K9612"});
-        db.execSQL("insert into Route(start_city,end_city,start_time,end_time,all_time,cost,vehicle,number) values(?,?,?,?,?,?,?,?)",new String[] {"昆明市","大理市","16","20","4小时","110","汽车","C2958"});
-        db.execSQL("insert into Route(start_city,end_city,start_time,end_time,all_time,cost,vehicle,number) values(?,?,?,?,?,?,?,?)",new String[] {"大理市","昆明市","10","15","5小时","64","火车","K9608"});
-        db.execSQL("insert into Route(start_city,end_city,start_time,end_time,all_time,cost,vehicle,number) values(?,?,?,?,?,?,?,?)",new String[] {"大理市","昆明市","11","17","6小时","128","汽车","C2956"});
-        db.execSQL("insert into Route(start_city,end_city,start_time,end_time,all_time,cost,vehicle,number) values(?,?,?,?,?,?,?,?)",new String[] {"大理市","北京市","11","14","3小时","1050","飞机","MU5299"});
-        db.execSQL("insert into Route(start_city,end_city,start_time,end_time,all_time,cost,vehicle,number) values(?,?,?,?,?,?,?,?)",new String[] {"大理市","丽江市","15","17","2小时","34","火车","K9619"});
-        db.execSQL("insert into Route(start_city,end_city,start_time,end_time,all_time,cost,vehicle,number) values(?,?,?,?,?,?,?,?)",new String[] {"大理市","丽江市","13","15","2小时","75","汽车","C8306"});
-        db.execSQL("insert into Route(start_city,end_city,start_time,end_time,all_time,cost,vehicle,number) values(?,?,?,?,?,?,?,?)",new String[] {"丽江市","大理市","20","21","1小时","49","火车","K9618"});
-        db.execSQL("insert into Route(start_city,end_city,start_time,end_time,all_time,cost,vehicle,number) values(?,?,?,?,?,?,?,?)",new String[] {"丽江市","大理市","09","11","2小时","67","汽车","C0124"});
         db.execSQL("insert into Route(start_city,end_city,start_time,end_time,all_time,cost,vehicle,number) values(?,?,?,?,?,?,?,?)",new String[] {"贵阳市","广州市","13","10","21小时","189.5","火车","K66"});
         db.execSQL("insert into Route(start_city,end_city,start_time,end_time,all_time,cost,vehicle,number) values(?,?,?,?,?,?,?,?)",new String[] {"贵阳市","广州市","14","18","4小时","267.5","火车","G2917"});
-    }
+        db.execSQL("insert into Route(start_city,end_city,start_time,end_time,all_time,cost,vehicle,number) values(?,?,?,?,?,?,?,?)",new String[] {"海口市","北京市","6","9","3","1800","飞机","KN1012"});
+        db.execSQL("insert into Route(start_city,end_city,start_time,end_time,all_time,cost,vehicle,number) values(?,?,?,?,?,?,?,?)",new String[] {"海口市","北京市","21","6","33","639","火车","Z202"});
+        db.execSQL("insert into Route(start_city,end_city,start_time,end_time,all_time,cost,vehicle,number) values(?,?,?,?,?,?,?,?)",new String[] {"海口市","广州市","11","23","12","267","火车","Z386"});
+        db.execSQL("insert into Route(start_city,end_city,start_time,end_time,all_time,cost,vehicle,number) values(?,?,?,?,?,?,?,?)",new String[] {"海口市","上海市","19","22","3","500","飞机","CA1974"});
+        db.execSQL("insert into Route(start_city,end_city,start_time,end_time,all_time,cost,vehicle,number) values(?,?,?,?,?,?,?,?)",new String[] {"海口市","南京市","11","14","3","900","飞机","AQ1039"});
+        db.execSQL("insert into Route(start_city,end_city,start_time,end_time,all_time,cost,vehicle,number) values(?,?,?,?,?,?,?,?)",new String[] {"西宁市","北京市","11","13","2","1000","飞机","CZ6991"});
+        db.execSQL("insert into Route(start_city,end_city,start_time,end_time,all_time,cost,vehicle,number) values(?,?,?,?,?,?,?,?)",new String[] {"西宁市","北京市","13","8","19","353","火车","T176"});
+        db.execSQL("insert into Route(start_city,end_city,start_time,end_time,all_time,cost,vehicle,number) values(?,?,?,?,?,?,?,?)",new String[] {"西宁市","上海市","10","12","26","434","火车","Z42"});
+        db.execSQL("insert into Route(start_city,end_city,start_time,end_time,all_time,cost,vehicle,number) values(?,?,?,?,?,?,?,?)",new String[] {"西宁市","上海市","7","11","4","2300","飞机","MU2153"});
+        db.execSQL("insert into Route(start_city,end_city,start_time,end_time,all_time,cost,vehicle,number) values(?,?,?,?,?,?,?,?)",new String[] {"西宁市","南京市","7","12","5","2200","飞机","HU7821"});
+        db.execSQL("insert into Route(start_city,end_city,start_time,end_time,all_time,cost,vehicle,number) values(?,?,?,?,?,?,?,?)",new String[] {"西宁市","杭州市","19","24","5","700","飞机","NS8244"});
+        db.execSQL("insert into Route(start_city,end_city,start_time,end_time,all_time,cost,vehicle,number) values(?,?,?,?,?,?,?,?)",new String[] {"昆明市","上海市","19","6","11","472","火车","K80"});
+        db.execSQL("insert into Route(start_city,end_city,start_time,end_time,all_time,cost,vehicle,number) values(?,?,?,?,?,?,?,?)",new String[] {"昆明市","南京市","19","7","36","456","火车","K724"});
+        db.execSQL("insert into Route(start_city,end_city,start_time,end_time,all_time,cost,vehicle,number) values(?,?,?,?,?,?,?,?)",new String[] {"昆明市","上海市","16","21","5","500","飞机","FM9398"});
+        db.execSQL("insert into Route(start_city,end_city,start_time,end_time,all_time,cost,vehicle,number) values(?,?,?,?,?,?,?,?)",new String[] {"贵阳市","北京市","8","11","3","1500","飞机","CZ3861"});
+        db.execSQL("insert into Route(start_city,end_city,start_time,end_time,all_time,cost,vehicle,number) values(?,?,?,?,?,?,?,?)",new String[] {"贵阳市","北京市","8","19","11","964","火车","G402"});
+        db.execSQL("insert into Route(start_city,end_city,start_time,end_time,all_time,cost,vehicle,number) values(?,?,?,?,?,?,?,?)",new String[] {"贵阳市","上海市","10","20","10","735","火车","G1324"});
+        db.execSQL("insert into Route(start_city,end_city,start_time,end_time,all_time,cost,vehicle,number) values(?,?,?,?,?,?,?,?)",new String[] {"贵阳市","南京市","8","16","8","744","火车","G1484"});
+        db.execSQL("insert into Route(start_city,end_city,start_time,end_time,all_time,cost,vehicle,number) values(?,?,?,?,?,?,?,?)",new String[] {"贵阳市","广州市","6","6","24","296","火车","K66"});
+        db.execSQL("insert into Route(start_city,end_city,start_time,end_time,all_time,cost,vehicle,number) values(?,?,?,?,?,?,?,?)",new String[] {"贵阳市","广州市","18","24","6","270","火车","G2917"});
+        db.execSQL("insert into Route(start_city,end_city,start_time,end_time,all_time,cost,vehicle,number) values(?,?,?,?,?,?,?,?)",new String[] {"北京市","海口市","23","3","4","1200","飞机","KN4589"});
+        db.execSQL("insert into Route(start_city,end_city,start_time,end_time,all_time,cost,vehicle,number) values(?,?,?,?,?,?,?,?)",new String[] {"北京市","海口市","17","2","33","585","火车","K182"});
+        db.execSQL("insert into Route(start_city,end_city,start_time,end_time,all_time,cost,vehicle,number) values(?,?,?,?,?,?,?,?)",new String[] {"上海市","海口市","20","22","2","800","飞机","HJ458"});
+        db.execSQL("insert into Route(start_city,end_city,start_time,end_time,all_time,cost,vehicle,number) values(?,?,?,?,?,?,?,?)",new String[] {"上海市","海口市","13","10","21","300","火车","K89"});
+        db.execSQL("insert into Route(start_city,end_city,start_time,end_time,all_time,cost,vehicle,number) values(?,?,?,?,?,?,?,?)",new String[] {"南京市","海口市","8","11","3","1500","飞机","YU799"});
+        db.execSQL("insert into Route(start_city,end_city,start_time,end_time,all_time,cost,vehicle,number) values(?,?,?,?,?,?,?,?)",new String[] {"北京市","西宁市","10","12","2","1200","飞机","PO595"});
+        db.execSQL("insert into Route(start_city,end_city,start_time,end_time,all_time,cost,vehicle,number) values(?,?,?,?,?,?,?,?)",new String[] {"北京市","西宁市","7","3","20","200","火车","Q466"});
+        db.execSQL("insert into Route(start_city,end_city,start_time,end_time,all_time,cost,vehicle,number) values(?,?,?,?,?,?,?,?)",new String[] {"海口市","西宁市","10","13","3","1600","飞机","QW988"});
+        db.execSQL("insert into Route(start_city,end_city,start_time,end_time,all_time,cost,vehicle,number) values(?,?,?,?,?,?,?,?)",new String[] {"南宁市","西宁市","9","12","3","1200","飞机","EI798"});
+        db.execSQL("insert into Route(start_city,end_city,start_time,end_time,all_time,cost,vehicle,number) values(?,?,?,?,?,?,?,?)",new String[] {"上海市","西宁市","13","15","2","1400","飞机","QW985"}); }
 
     private void addCity(SQLiteDatabase db) {
         db.execSQL("insert into City(name) values(?)",new String[] {"上海市"});
@@ -214,8 +232,8 @@ public class MyMapOpenHelper extends SQLiteOpenHelper {
         db.execSQL("insert into City(name) values(?)",new String[] {"南宁市"});
         db.execSQL("insert into City(name) values(?)",new String[] {"南京市"});
         db.execSQL("insert into City(name) values(?)",new String[] {"昆明市"});
-        db.execSQL("insert into City(name) values(?)",new String[] {"大理市"});
-        db.execSQL("insert into City(name) values(?)",new String[] {"丽江市"});
+        db.execSQL("insert into City(name) values(?)",new String[] {"海口市"});
+        db.execSQL("insert into City(name) values(?)",new String[] {"西宁市"});
         db.execSQL("insert into City(name) values(?)",new String[] {"贵阳市"});
     }
 }
