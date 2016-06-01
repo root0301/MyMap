@@ -65,6 +65,7 @@ public class ChooseActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LogUtil.getInstance().debug("choose is oncreate-------------------------");
         setContentView(R.layout.activity_choose);
         ActivityCollector.getInstance().addActivity(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -128,6 +129,7 @@ public class ChooseActivity extends AppCompatActivity implements View.OnClickLis
             startText = intent.getStringExtra("name");
             currentTime = intent.getIntExtra("time",-1);
         }
+
         switch (nameType) {
             case 1:
                 startCity.setText(startText);
@@ -162,6 +164,7 @@ public class ChooseActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     protected void onResume() {
         super.onResume();
+        LogUtil.getInstance().debug("choose is resume-------------------------");
         setCityText();
         setCheck();
     }
@@ -171,6 +174,9 @@ public class ChooseActivity extends AppCompatActivity implements View.OnClickLis
      */
     @Override
     public void onClick(View v) {
+        startCity = (TextView) findViewById(R.id.start_text);
+        endCity = (TextView) findViewById(R.id.end_text);
+        passedCity = (TextView) findViewById(R.id.passed_text);
         Intent intent = new Intent(ChooseActivity.this, CityActivity.class);
         Intent wayIntent = new Intent(ChooseActivity.this,WaysActivity.class);
         switch (v.getId()) {
@@ -209,7 +215,13 @@ public class ChooseActivity extends AppCompatActivity implements View.OnClickLis
                             Toast.makeText(ChooseActivity.this,"请选择城市好么",Toast.LENGTH_SHORT).show();
                             break;
                         }
-                        ways = utility.findTheRoute(startCity.getText().toString().trim(), endCity.getText().toString().trim(),passedCityNames,limited ,STRATEGY,currentTime);
+                System.out.println("the limiteTime is "+limited);
+                System.out.println("the passed size is "+passedCityNames.size());
+                System.out.println("the currentTime is "+currentTime);
+                Utility test = new Utility(this);
+
+                ways = test.findTheRoute(startCity.getText().toString().trim(), endCity.getText().toString().trim(),passedCityNames,limited ,STRATEGY,currentTime);
+
                         if (ways.size()==0) {
                             Toast.makeText(ChooseActivity.this,"没有符合条件的路线",Toast.LENGTH_SHORT).show();
                             break;
@@ -219,11 +231,12 @@ public class ChooseActivity extends AppCompatActivity implements View.OnClickLis
                             wayIntent.putExtra("time",currentTime);
                         }
                         int[] received = new int[5];
-                        received = utility.calculateTimeMoney(ways,currentTime);
+                        received = test.calculateTimeMoney(ways,currentTime);
                         wayIntent.putExtra("allMoney",received[1]);
-                        wayIntent.putExtra("allTime",received[2]);
-                        startActivity(wayIntent);
-                        finish();
+                        wayIntent.putExtra("allTime", received[2]);
+                startActivity(wayIntent);
+
+                       ///  finish();
 
                 break;
             case R.id.history_show :
@@ -273,7 +286,17 @@ public class ChooseActivity extends AppCompatActivity implements View.OnClickLis
           return true;
       }
       return super.onKeyDown(keyCode, event);
-
   }
 
+    public void test() {
+        if (startText!=null) {
+            startCity.setText(startText);
+        }
+        if (endText!=null) {
+            endCity.setText(endText);
+        }
+        if (passedCityNames.size()!=0) {
+            passedCity.setText("已选择"+passedCityNames.size()+"个城市");
+        }
+    }
 }

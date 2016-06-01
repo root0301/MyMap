@@ -52,7 +52,7 @@ public class WaysActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.aitivity_ways);
-        ActivityCollector.getInstance().addActivity(this);
+        //ActivityCollector.getInstance().addActivity(this);
         search = (FloatingActionButton) findViewById(R.id.began_travel);
         list = new ArrayList<Way>();
         cities = new ArrayList<City>();
@@ -104,6 +104,7 @@ public class WaysActivity extends AppCompatActivity {
                     mapIntent.putExtra("time", currentTime);
                 }
                 startActivity(mapIntent);
+                finish();
             }
         });
         recordIntoFile();

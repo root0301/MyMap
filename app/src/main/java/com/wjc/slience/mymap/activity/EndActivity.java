@@ -20,13 +20,14 @@ public class EndActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_end);
-        ActivityCollector.getInstance().addActivity(this);
+        //ActivityCollector.getInstance().addActivity(this);
         fb = (FloatingActionButton) findViewById(R.id.ufo);
         final Intent intent = new Intent(EndActivity.this,ChooseActivity.class);
         fb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(intent);
+                finish();
             }
         });
     }

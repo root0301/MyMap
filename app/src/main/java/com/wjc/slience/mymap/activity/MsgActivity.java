@@ -29,7 +29,7 @@ public class MsgActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_msg);
-        ActivityCollector.getInstance().addActivity(this);
+        //ActivityCollector.getInstance().addActivity(this);
         msg = (TextView) findViewById(R.id.msg);
         msgTxt = LogUtil.getInstance().readTheTrip();
         msg.setText(msgTxt);

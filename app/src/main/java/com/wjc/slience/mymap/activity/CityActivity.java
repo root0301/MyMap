@@ -14,6 +14,7 @@ import android.view.View;
 import com.wjc.slience.mymap.R;
 import com.wjc.slience.mymap.common.ActivityCollector;
 import com.wjc.slience.mymap.common.CityAdapter;
+import com.wjc.slience.mymap.common.LogUtil;
 import com.wjc.slience.mymap.db.MyMapDB;
 import com.wjc.slience.mymap.model.City;
 
@@ -36,8 +37,9 @@ public class CityActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LogUtil.getInstance().debug("city is oncreate-------------------------");
         setContentView(R.layout.activity_cities);
-        ActivityCollector.getInstance().addActivity(this);
+        //ActivityCollector.getInstance().addActivity(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("城市选择");
         setSupportActionBar(toolbar);
@@ -62,6 +64,7 @@ public class CityActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        LogUtil.getInstance().debug("city is onresume-------------------------");
         Intent intent = getIntent();
         mType = intent.getIntExtra("type",1);
         initRecyclerView(mType);
@@ -80,6 +83,7 @@ public class CityActivity extends AppCompatActivity {
                     intent.putExtra("name", data.get(position));
                     intent.putExtra("type", mType);
                     startActivity(intent);
+                    finish();
                 } else if (mType == 3){
                     if (cities.contains(data.get(position))) {
                         cities.remove(data.get(position));
@@ -117,6 +121,7 @@ public class CityActivity extends AppCompatActivity {
             i.putExtra("type",3);
             i.putStringArrayListExtra("cities", (ArrayList<String>) cities);
             startActivity(i);
+            finish();
         }
         return super.onOptionsItemSelected(item);
     }

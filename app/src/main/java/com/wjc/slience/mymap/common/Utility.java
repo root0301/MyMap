@@ -38,7 +38,8 @@ public class Utility {
     private int passedState;
     private int sTime;
     private int sDate;
-
+    private int tempTime;
+    private int tempDate;
     private int leastCost;
     private int leastTime;
     private static final int MAX = 100000000;
@@ -80,6 +81,7 @@ public class Utility {
             sTime = cTime;
         limited = limited + li;
         sDate = calendar.get(Calendar.DAY_OF_WEEK);
+        tempTime = sTime; tempDate =sDate;
         initGraph();
 
         switch (STRATEGY) {
@@ -92,6 +94,17 @@ public class Utility {
             case 3:
                 findTheSuitRoute();
                 break;
+        }
+
+        if (STRATEGY == 3 && route.size() == 0) {
+            leastCost = MAX; leastTime = MAX;
+            sTime = tempTime;
+            sDate = tempDate;
+            findTheTimeLeastRoute();
+            if (leastTime > limited) {
+                route.clear();
+            }
+
         }
         return route;
     }
@@ -324,8 +337,11 @@ public class Utility {
             int id = stack.pop();
             route.add(ways.get(id-1));
         }
+
         return true;
     }
+
+
 
     private boolean findTheCostLeastRoute() {
         Queue<Integer> queue = new LinkedList<Integer>();
@@ -427,6 +443,7 @@ public class Utility {
             now = sTime;
         for (int i=0;i<list.size();i++) {
             int temp = (int)list.get(i).getStart_time() - now;
+            temp = temp>=0?temp:(temp+24);
             time = temp + list.get(i).getAll_time() + time;
             now = (int)list.get(i).getEnd_time();
         }
